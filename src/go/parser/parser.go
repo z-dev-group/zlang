@@ -144,6 +144,7 @@ func (p *Parser) parseImportFile(program *ast.Program, fileName string) {
 	importParser := New(importLexer)
 	importProgram := importParser.ParseProgram()
 	program.Statements = append(program.Statements, importProgram.Statements...)
+	p.nextToken() // remove file path string
 }
 
 func (p *Parser) parseStatement() ast.Statement {
