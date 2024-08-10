@@ -1,7 +1,9 @@
 package build
 
 import (
+	"fmt"
 	"z/ast"
+	"z/evaluator"
 	"z/object"
 )
 
@@ -11,49 +13,63 @@ var (
 	FALSE = &object.Boolean{Value: false}
 )
 
-func Eval(node ast.Node, env *object.Environment) string {
+func Eval(node ast.Node, env *object.Environment) (object.Object, string) {
 	switch node := node.(type) {
-	case *ast.Program:
-		return evalProgram(node, env)
-	case *ast.ExpressionStatement:
-		return Eval(node.Expression, env)
-	case *ast.Boolean:
-		return nativeBoolToBooleanObject(node.Value)
 	case *ast.LetStatement:
-		val := Eval(node.Value, env)
-		return "char " + node.Name.Value + "[]=" + val + ";\n"
+		object, val := Eval(node.Value, env)
+		env.Set(node.Name.Value, object)
+		objectType := object.Type()
+		switch objectType {
+		case "STRING":
+			return nil, "char *" + node.Name.Value + "=" + val + ";\n"
+		case "INTEGER":
+			return nil, "int " + node.Name.Value + "=" + val + ";\n"
+		case "FLOAT":
+			return nil, "double " + node.Name.Value + "=" + val + ";\n"
+		}
 	case *ast.Identifier:
-		return node.Value
+		object := evalIdentifier(node, env)
+		return object, node.Value
 	case *ast.FunctionLiteral:
-		return node.Name
+		return nil, node.Name
 	case *ast.CallExpression:
-		function := Eval(node.Function, env)
+		_, function := Eval(node.Function, env)
 		callString := ""
 		switch function {
 		case "puts":
 			for _, argument := range node.Arguments {
-				argumentRes := Eval(argument, env)
-				callString += "printf(\"%s\"," + argumentRes + ");\n"
+				object, argumentRes := Eval(argument, env)
+				if object.Type() == "STRING" {
+					callString += "printf(\"%s\"," + argumentRes + ");\n"
+				}
+				if object.Type() == "INTEGER" {
+					callString += "printf(\"%d\"," + argumentRes + ");\n"
+				}
+				if object.Type() == "FLOAT" {
+					callString += "printf(\"%f\"," + argumentRes + ");\n"
+				}
 			}
 		}
-		return callString
+		return nil, callString
 	case *ast.StringLiteral:
-		return string("\"" + node.Value + "\"")
+		return &object.String{}, string("\"" + node.Value + "\"")
+	case *ast.IntegerLiteral:
+		return &object.Integer{}, node.String()
+	case *ast.FloatLiteral:
+		return &object.Float{}, node.String()
+	case *ast.ExpressionStatement:
+		return Eval(node.Expression, env)
 	}
-	return ""
+	return nil, ""
 }
 
-func evalProgram(program *ast.Program, env *object.Environment) string {
-	var result string
-	for _, statement := range program.Statements {
-		result += Eval(statement, env)
+func evalIdentifier(node *ast.Identifier, env *object.Environment) object.Object {
+	val, ok := env.Get(node.Value)
+	if builtin, ok := evaluator.Builtins[node.Value]; ok {
+		return builtin
 	}
-	return result
-}
-
-func nativeBoolToBooleanObject(input bool) string {
-	if input {
-		return "true"
+	if !ok {
+		fmt.Println("identifier not found:", node.Value)
 	}
-	return "false"
+	return val
 }

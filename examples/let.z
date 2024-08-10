@@ -1,2 +1,8 @@
-let name = "pantingwen"
+let name = "seven"
 puts(name, "\n")
+
+let age = 24
+puts(age, "\n")
+
+let money = 98.12
+puts(money, "\n")

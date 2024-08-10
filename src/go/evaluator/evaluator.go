@@ -429,7 +429,7 @@ func evalBlockStatement(block *ast.BlockStatement, env *object.Environment) obje
 func evalIdentifier(node *ast.Identifier, env *object.Environment) object.Object {
 	val, ok := env.Get(node.Value)
 
-	if builtin, ok := builtins[node.Value]; ok {
+	if builtin, ok := Builtins[node.Value]; ok {
 		return builtin
 	}
 	if node.Value == "http_server" {

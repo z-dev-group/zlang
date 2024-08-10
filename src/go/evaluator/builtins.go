@@ -4,7 +4,7 @@ import (
 	"z/object"
 )
 
-var builtins = map[string]*object.Builtin{
+var Builtins = map[string]*object.Builtin{
 	"len":         object.GetBuiltinByName("len"),
 	"first":       object.GetBuiltinByName("first"),
 	"last":        object.GetBuiltinByName("last"),

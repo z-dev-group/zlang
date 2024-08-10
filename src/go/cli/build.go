@@ -39,7 +39,7 @@ func generateProgram(program *ast.Program, env *object.Environment) string {
 	var generateCompiledCode string
 	var compiledCode string
 	for _, statement := range program.Statements {
-		code := build.Eval(statement, env)
+		_, code := build.Eval(statement, env)
 		compiledCode = compiledCode + code
 	}
 
@@ -65,6 +65,6 @@ func compileC(code string, outFile string) {
 		fmt.Println(err.Error())
 	} else {
 		fmt.Println("build success!")
-		os.Remove(tempFileName)
+		//os.Remove(tempFileName)
 	}
 }
