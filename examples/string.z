@@ -1,0 +1,10 @@
+let hello = "world"
+puts(hello, "\n")
+puts(hello[0], "\n")
+puts(len(hello), "\n")
+let i = 0
+
+while (i < len(hello)) {
+  puts("current char is ", hello[i], "\n")
+  i = i + 1
+}

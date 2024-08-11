@@ -163,6 +163,8 @@ func evalIndexExpression(left, index object.Object) object.Object {
 	switch {
 	case left.Type() == object.ARRAY_OBJ && index.Type() == object.INTEGER_OBJ:
 		return evalArrayIndexExpression(left, index)
+	case left.Type() == object.STRING_OBJ && index.Type() == object.INTEGER_OBJ:
+		return evalStringIndexExpress(left, index)
 	case left.Type() == object.HASH_OBJ:
 		return evalHashIndexExpression(left, index)
 	default:
@@ -170,6 +172,19 @@ func evalIndexExpression(left, index object.Object) object.Object {
 	}
 }
 
+func evalStringIndexExpress(str, index object.Object) object.Object {
+	stringObject, _ := str.(*object.String)
+	key, _ := index.(*object.Integer)
+	idx := key.Value
+	max := len(stringObject.Value)
+	if idx < 0 || idx > int64(max) {
+		return NULL
+	}
+	returnStringObject := object.String{}
+	singleString := string(stringObject.Value[idx])
+	returnStringObject.Value = singleString
+	return &returnStringObject
+}
 func evalHashIndexExpression(hash, index object.Object) object.Object {
 	hashObject := hash.(*object.Hash)
 	key, ok := index.(object.Hashable)
