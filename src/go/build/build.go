@@ -85,8 +85,30 @@ func Eval(node ast.Node, env *object.Environment) (object.Object, string) {
 		return left, infixString
 	case *ast.BlockStatement:
 		return evalBlockStatement(node, env)
+	case *ast.WhileExpression:
+		return evalWhileExpression(node, env)
+	case *ast.AssignExpression:
+		_, ok := env.Get(node.Name.Value)
+		if !ok {
+			fmt.Println("variable " + node.Name.Value + " not found")
+		}
+		_, valString := Eval(node.Value, env)
+		compileCode := ""
+		compileCode += node.Name.Value + "=" + valString + ";"
+		return nil, compileCode
 	}
 	return nil, "convert failed"
+}
+
+func evalWhileExpression(we *ast.WhileExpression, env *object.Environment) (object.Object, string) {
+	condition, conditionString := Eval(we.Condition, env)
+	compileCode := "while("
+	compileCode += conditionString
+	compileCode += "){"
+	_, bodyString := Eval(we.Body, env)
+	compileCode += bodyString
+	compileCode += "}"
+	return condition, compileCode
 }
 func evalBlockStatement(block *ast.BlockStatement, env *object.Environment) (object.Object, string) {
 	var result object.Object
