@@ -35,20 +35,39 @@ func parseAstToC(sourceCode string) string {
 	return compiledCode
 }
 
+func ConvertZToC(sourceCode string, isWrapper bool) string {
+	l := lexer.New(sourceCode)
+	p := parser.New(l)
+	program := p.ParseProgram()
+	env := object.NewEnvironment()
+	compiledCCode := ""
+	if isWrapper {
+		compiledCCode = generateProgram(program, env)
+	} else {
+		compiledCCode = generateCompiledCode(program, env)
+	}
+	return compiledCCode
+}
+
 func generateProgram(program *ast.Program, env *object.Environment) string {
-	var generateCompiledCode string
+	generatedCompiledCode := ""
+	compiledCode := generateCompiledCode(program, env)
+	generatedCompiledCode += "#include <stdio.h>\n"
+	generatedCompiledCode += "#include <stdlib.h>\n"
+	generatedCompiledCode += "int main() {\n"
+	generatedCompiledCode += compiledCode + "\n"
+	generatedCompiledCode += "}\n"
+	return generatedCompiledCode
+}
+
+func generateCompiledCode(program *ast.Program, env *object.Environment) string {
 	var compiledCode string
 	for _, statement := range program.Statements {
+		fmt.Println(statement)
 		_, code := build.Eval(statement, env)
 		compiledCode = compiledCode + code
 	}
-
-	generateCompiledCode += "#include <stdio.h>\n"
-	generateCompiledCode += "#include <stdlib.h>\n"
-	generateCompiledCode += "int main() {\n"
-	generateCompiledCode += compiledCode + "\n"
-	generateCompiledCode += "}\n"
-	return generateCompiledCode
+	return compiledCode
 }
 
 func compileC(code string, outFile string) {

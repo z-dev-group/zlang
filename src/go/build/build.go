@@ -21,11 +21,11 @@ func Eval(node ast.Node, env *object.Environment) (object.Object, string) {
 		objectType := object.Type()
 		switch objectType {
 		case "STRING":
-			return nil, "char *" + node.Name.Value + "=" + val + ";\n"
+			return nil, "char *" + node.Name.Value + " = " + val + ";\n"
 		case "INTEGER":
-			return nil, "int " + node.Name.Value + "=" + val + ";\n"
+			return nil, "int " + node.Name.Value + " = " + val + ";\n"
 		case "FLOAT":
-			return nil, "double " + node.Name.Value + "=" + val + ";\n"
+			return nil, "double " + node.Name.Value + " = " + val + ";\n"
 		}
 	case *ast.Identifier:
 		object := evalIdentifier(node, env)
@@ -59,10 +59,59 @@ func Eval(node ast.Node, env *object.Environment) (object.Object, string) {
 		return &object.Float{}, node.String()
 	case *ast.ExpressionStatement:
 		return Eval(node.Expression, env)
+	case *ast.IfExpression:
+		return evalIfExpression(node, env)
+	case *ast.InfixExpression:
+		left, code := Eval(node.Left, env)
+		infixString := ""
+		if isError(left) {
+			return left, code
+		}
+		if left.Type() == "STRING" {
+			infixString += "\"" + code + "\""
+		} else {
+			infixString += code
+		}
+		right, code := Eval(node.Right, env)
+		if isError(right) {
+			return right, code
+		}
+		infixString += node.Operator
+		if right.Type() == "STRING" {
+			infixString += "\"" + code + "\""
+		} else {
+			infixString += code
+		}
+		return left, infixString
+	case *ast.BlockStatement:
+		return evalBlockStatement(node, env)
 	}
-	return nil, ""
+	return nil, "convert failed"
 }
-
+func evalBlockStatement(block *ast.BlockStatement, env *object.Environment) (object.Object, string) {
+	var result object.Object
+	compiledCode := ""
+	for _, statement := range block.Statements {
+		_, resultString := Eval(statement, env)
+		compiledCode += resultString
+	}
+	return result, compiledCode
+}
+func evalIfExpression(ie *ast.IfExpression, env *object.Environment) (object.Object, string) {
+	compiledCode := ""
+	condition, conditionString := Eval(ie.Condition, env)
+	compiledCode += "if (" + conditionString + ") {"
+	_, consequenceString := Eval(ie.Consequence, env)
+	compiledCode += consequenceString
+	compiledCode += "}"
+	if ie.Alternative != nil {
+		compiledCode += " else{"
+		_, alternativeString := Eval(ie.Alternative, env)
+		compiledCode += alternativeString
+		compiledCode += " }"
+	}
+	return condition, compiledCode
+}
 func evalIdentifier(node *ast.Identifier, env *object.Environment) object.Object {
 	val, ok := env.Get(node.Value)
 	if builtin, ok := evaluator.Builtins[node.Value]; ok {
@@ -72,4 +121,11 @@ func evalIdentifier(node *ast.Identifier, env *object.Environment) object.Object
 		fmt.Println("identifier not found:", node.Value)
 	}
 	return val
+}
+
+func isError(obj object.Object) bool {
+	if obj != nil {
+		return obj.Type() == object.ERROR_OBJ
+	}
+	return false
 }
