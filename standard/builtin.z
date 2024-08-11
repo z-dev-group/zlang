@@ -13,3 +13,7 @@ let is_bool = fn(variable) {
 let is_error = fn(variable) {
   return typeof(variable) == "error"
 }
+
+let is_float = fn(variable) {
+  return typeof(variable) == "float"
+}

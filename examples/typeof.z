@@ -5,4 +5,5 @@ puts(typeof(a), "\n")
 
 puts(is_int(12), "\n")
 puts(is_string("hello"), "\n")
-puts(is_bool(false))
+puts(is_bool(false),"\n")
+puts(is_float(123.45), "\n")
