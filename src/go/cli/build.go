@@ -63,7 +63,6 @@ func generateProgram(program *ast.Program, env *object.Environment) string {
 func generateCompiledCode(program *ast.Program, env *object.Environment) string {
 	var compiledCode string
 	for _, statement := range program.Statements {
-		fmt.Println(statement)
 		_, code := build.Eval(statement, env)
 		compiledCode = compiledCode + code
 	}
