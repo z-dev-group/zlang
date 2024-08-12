@@ -17,3 +17,7 @@ fn is_error(variable) {
 fn is_float(variable) {
   return typeof(variable) == "float"
 }
+
+fn var_dump(variable) {
+  puts(variable, "\n")
+}

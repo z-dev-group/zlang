@@ -1,0 +1,17 @@
+fn prefix(str, pre) {
+  let preLen = len(pre)
+  let strLen = len(str)
+  if (strLen < preLen) {
+    return false
+  }
+  let i = 0
+  let isPre = true
+  let a = false
+  while (i < preLen) {
+    if (pre[i] != str[i]) {
+      isPre = false
+    }
+    i = i + 1
+  }
+  return isPre
+}

@@ -1,3 +1,4 @@
+import "../standard/string.z"
 let hello = "world"
 puts(hello, "\n")
 puts(hello[0], "\n")
@@ -8,3 +9,5 @@ while (i < len(hello)) {
   puts("current char is ", hello[i], "\n")
   i = i + 1
 }
+
+var_dump(prefix("hello", "hel"), "\n")
