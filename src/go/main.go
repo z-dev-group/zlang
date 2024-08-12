@@ -35,6 +35,7 @@ func main() {
 			panic(err)
 		}
 		sourceCode := string(fileContent)
+		sourceCode = `import "../standard/builtin.z";` + sourceCode // todo need path dir
 		switch operation {
 		case "run":
 			cli.RunSourceCode(sourceCode, mode, fileName)

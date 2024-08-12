@@ -1,5 +1,3 @@
-import "../standard/builtin.z"
-
 let a = "hello"
 puts(typeof(a), "\n")
 
