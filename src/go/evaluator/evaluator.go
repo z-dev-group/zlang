@@ -292,13 +292,13 @@ func evalWhileExpression(we *ast.WhileExpression, env *object.Environment) objec
 }
 
 func isTruthy(obj object.Object) bool {
+	boolean, ok := obj.(*object.Boolean) // question ?
+	if ok {
+		return boolean.Value
+	}
 	switch obj {
 	case NULL:
 		return false
-	case FALSE:
-		return false
-	case TRUE:
-		return true
 	default:
 		return true
 	}
