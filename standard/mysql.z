@@ -1,4 +1,4 @@
-let mysql_select = fn(sql) {
+fn mysql_select(sql) {
   let result = mysql_query(sql)
   if (len(result) > 1) {
     let column = result[0]
@@ -22,7 +22,7 @@ let mysql_select = fn(sql) {
   }
 } 
 
-let mysql_select_one = fn(sql) {
+fn mysql_select_one(sql) {
   let result = mysql_select(sql)
   if (len(result) > 0) {
     return result[0]
