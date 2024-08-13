@@ -1,0 +1,13 @@
+fn join(arr, seperator) {
+  let arrLen = len(arr)
+  let i = 0
+  let retStr = ""
+  while (i < arrLen) {
+    retStr = retStr + arr[i]
+    i = i + 1
+    if (i != arrLen) {
+      retStr = retStr + seperator
+    }
+  }
+  return retStr
+}

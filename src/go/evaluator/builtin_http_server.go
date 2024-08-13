@@ -79,8 +79,19 @@ func handlePostData(postJson map[string]interface{}, pairs map[object.HashKey]ob
 		valueStr, ok := value.(string)
 		if ok {
 			postItemValue.Value = valueStr
+			postPirs[postItemNameHashed] = object.HashPair{Key: &postItemName, Value: &postItemValue}
 		}
-		postPirs[postItemNameHashed] = object.HashPair{Key: &postItemName, Value: &postItemValue}
+		array, ok := value.([]interface{})
+		if ok {
+			arrayObj := object.Array{}
+			for _, item := range array {
+				itemStr, ok := item.(string)
+				if ok {
+					arrayObj.Elements = append(arrayObj.Elements, &object.String{Value: itemStr})
+				}
+			}
+			postPirs[postItemNameHashed] = object.HashPair{Key: &postItemName, Value: &arrayObj}
+		}
 	}
 	postHash := object.Hash{Pairs: postPirs}
 	postName := object.String{}

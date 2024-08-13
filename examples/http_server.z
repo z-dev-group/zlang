@@ -1,9 +1,13 @@
 import "../standard/mysql.z"
 let rootFn = fn(request) {
+  var_dump(request["post"]["userNames"][0], "xx")
   return "this is root"
 }
 let helloFn = fn(request) {
   return "hello"
+}
+fn parametersFn(request) {
+  return request
 }
 mysql_init("127.0.0.1:3306", "root", "123456", "test")
 let mysqlFn = fn(request) {
@@ -21,6 +25,7 @@ let routes = {
   "/": rootFn,
   "/hello": helloFn,
   "/mysql": mysqlFn,
+  "/parameters": parametersFn,
   "/json": {
     "fn": mysqlFn,
     "cfg": {

@@ -1,3 +1,4 @@
+import "../standard/array.z"
 let names = ["jack", "tony", "sevenpan"]
 let index = 0
 while (index < len(names)) {
@@ -5,3 +6,5 @@ while (index < len(names)) {
   puts("current name is:", name, "\n")
   index = index + 1
 }
+
+var_dump(join(names, "','"))
