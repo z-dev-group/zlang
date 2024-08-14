@@ -23,6 +23,7 @@ const (
 	STRING   = "STRING"
 	IMPORT   = "IMPORT"
 	WHILE    = "WHILE"
+	PACKAGE  = "PACKAGE"
 
 	ASSIGN   = "="
 	PLUS     = "+"
@@ -55,15 +56,16 @@ type Token struct {
 }
 
 var keywords = map[string]TokenType{
-	"fn":     FUNCTION,
-	"let":    LET,
-	"true":   TRUE,
-	"false":  FALSE,
-	"if":     IF,
-	"else":   ELSE,
-	"return": RETURN,
-	"import": IMPORT,
-	"while":  WHILE,
+	"fn":      FUNCTION,
+	"let":     LET,
+	"true":    TRUE,
+	"false":   FALSE,
+	"if":      IF,
+	"else":    ELSE,
+	"return":  RETURN,
+	"import":  IMPORT,
+	"while":   WHILE,
+	"package": PACKAGE,
 }
 
 func LookIndent(indent string) TokenType {

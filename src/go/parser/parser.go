@@ -94,6 +94,7 @@ func New(l *lexer.Lexer) *Parser {
 	p.registerPrefix(token.LBRACE, p.parseHashLiteral)
 	p.registerPrefix(token.WHILE, p.parseWhileExpression)
 	p.registerPrefix(token.FLOAT, p.parseFloatLiteral)
+	p.registerPrefix(token.PACKAGE, p.parsePackageExpress)
 	return p
 }
 
@@ -248,6 +249,7 @@ func (p *Parser) parseAssignHashExpress(identifier *ast.Identifier) ast.Expressi
 		exp.Index = index
 		return exp
 	}
+	p.nextToken()
 	p.nextToken()
 	value := p.parseExpression(LOWEST)
 	stmt := &ast.HashAssignExpress{Token: p.curToken, Hash: *identifier, Index: index, Value: value}
@@ -557,4 +559,9 @@ func (p *Parser) parseFloatLiteral() ast.Expression {
 	}
 	lit.Value = value
 	return lit
+}
+
+func (p *Parser) parsePackageExpress() ast.Expression {
+	fmt.Println("package..")
+	return nil
 }

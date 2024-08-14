@@ -1,0 +1,7 @@
+package test
+
+fn hello() {
+  var_dump("hello")
+}
+
+hello()

@@ -4,7 +4,7 @@ import (
 	"z/token"
 )
 
-var preToken token.Token
+var preToken token.Token = token.Token{Literal: ""}
 
 type Lexer struct {
 	input       string // 输入的字符串
@@ -128,7 +128,7 @@ func (l *Lexer) NextToken() token.Token {
 		tok.Type = token.STRING
 		tok.Literal = l.readString()
 	case '\n': // replace \n with ;
-		if preToken.Literal != ";" && preToken.Literal != "{" && preToken.Literal != "," {
+		if preToken.Literal != ";" && preToken.Literal != "{" && preToken.Literal != "," && preToken.Literal != "" {
 			tok.Type = token.SEMICOLON
 			tok.Literal = ";"
 		} else {

@@ -41,6 +41,7 @@ while (2 > 1) {x}
 a = b + 1
 return []
 let money = 100.98
+package string
 `
 
 	tests := []struct {
@@ -168,6 +169,9 @@ let money = 100.98
 		{token.IDENT, "money"},
 		{token.ASSIGN, "="},
 		{token.FLOAT, "100.98"},
+		{token.SEMICOLON, ";"},
+		{token.PACKAGE, "package"},
+		{token.IDENT, "string"},
 		{token.SEMICOLON, ";"},
 		{token.EOF, ""},
 	}
