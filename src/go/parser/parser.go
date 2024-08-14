@@ -243,7 +243,7 @@ func (p *Parser) parseAssignHashExpress(identifier *ast.Identifier) ast.Expressi
 	p.nextToken()
 	index := p.parseExpression(LOWEST)
 	p.nextToken()
-	if !p.expectPeek(token.ASSIGN) {
+	if !p.peekTokenIs(token.ASSIGN) {
 		exp := &ast.IndexExpression{Token: identifier.Token, Left: identifier}
 		exp.Index = index
 		return exp
