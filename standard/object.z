@@ -1,0 +1,4 @@
+fn set(object, key, name) {
+  object[key] = name
+  return object
+}
