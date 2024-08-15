@@ -46,9 +46,10 @@ func main() {
 				runSourceCodeLines = append(runSourceCodeLines, sourceCodeLines[1:]...)
 				sourceCode = strings.Join(runSourceCodeLines, "\n")
 			} else {
-				sourceCode = builtinLine + builtinLine
+				sourceCode = builtinLine + sourceCode
 			}
 		}
+		sourceCode = sourceCode + "\n"
 		switch operation {
 		case "run":
 			cli.RunSourceCode(sourceCode, mode, fileName)
