@@ -14,6 +14,7 @@ import (
 func RunSourceCode(sourceCode string, mode string, fileName string) {
 	l := lexer.New(sourceCode)
 	p := parser.New(l)
+	l.SetFileName(fileName)
 	filePaths := strings.Split(fileName, "/")
 	runSourceDir := strings.Join(filePaths[0:len(filePaths)-1], "/")
 	p.SetRunSourceDir(runSourceDir)

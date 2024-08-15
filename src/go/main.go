@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"os/user"
+	"strings"
 	"z/cli"
 	"z/repl"
 )
@@ -35,7 +36,19 @@ func main() {
 			panic(err)
 		}
 		sourceCode := string(fileContent)
-		sourceCode = `import "../standard/builtin.z";` + sourceCode // todo need path dir
+		sourceCodeLines := strings.Split(sourceCode, "\n")
+		if len(sourceCodeLines) > 0 {
+			builtinLine := `import "../standard/builtin.z";` // todo need path dir
+			if strings.Contains(sourceCodeLines[0], "package") {
+				runSourceCodeLines := []string{}
+				runSourceCodeLines = append(runSourceCodeLines, sourceCodeLines[0])
+				runSourceCodeLines = append(runSourceCodeLines, builtinLine)
+				runSourceCodeLines = append(runSourceCodeLines, sourceCodeLines[1:]...)
+				sourceCode = strings.Join(runSourceCodeLines, "\n")
+			} else {
+				sourceCode = builtinLine + builtinLine
+			}
+		}
 		switch operation {
 		case "run":
 			cli.RunSourceCode(sourceCode, mode, fileName)

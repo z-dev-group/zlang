@@ -54,12 +54,17 @@ type Parser struct {
 
 	prefixParseFns map[token.TokenType]prefixParseFn
 	infixPasrseFns map[token.TokenType]infixPasrseFn
+
+	tokenCount int
 }
+
+var initReadCount int = 2
 
 func New(l *lexer.Lexer) *Parser {
 	p := &Parser{
-		l:      l,
-		errors: []string{},
+		l:          l,
+		errors:     []string{},
+		tokenCount: 0,
 	}
 
 	// 读取两个词法单元，以设置curToken和peekToken
@@ -94,13 +99,13 @@ func New(l *lexer.Lexer) *Parser {
 	p.registerPrefix(token.LBRACE, p.parseHashLiteral)
 	p.registerPrefix(token.WHILE, p.parseWhileExpression)
 	p.registerPrefix(token.FLOAT, p.parseFloatLiteral)
-	p.registerPrefix(token.PACKAGE, p.parsePackageExpress)
 	return p
 }
 
 func (p *Parser) nextToken() {
 	p.curToken = p.peekToken
 	p.peekToken = p.l.NextToken()
+	p.tokenCount = p.tokenCount + 1
 }
 
 func (p *Parser) Errors() []string {
@@ -143,6 +148,7 @@ func (p *Parser) parseImportFile(program *ast.Program, fileName string) {
 	}
 	importLexer := lexer.New(string(importCode))
 	importParser := New(importLexer)
+	importLexer.SetFileName(fileName)
 	importProgram := importParser.ParseProgram()
 	program.Statements = append(program.Statements, importProgram.Statements...)
 	p.nextToken() // remove file path string
@@ -154,13 +160,26 @@ func (p *Parser) parseStatement() ast.Statement {
 		return p.parseLetStatement()
 	case token.RETURN:
 		return p.parseReturnStatement()
+	case token.PACKAGE:
+		return p.parsePackageStatement()
 	default:
 		return p.parseExpressionStatement()
 	}
 }
 
+func (p *Parser) parsePackageStatement() ast.Statement {
+	if p.tokenCount != initReadCount {
+		p.errors = append(p.errors, "package need be the first token")
+		return nil
+	}
+	p.nextToken()
+	p.l.SetPackageName(p.curToken.Literal)
+	p.nextToken()
+	return nil
+}
+
 func (p *Parser) parseLetStatement() ast.Statement {
-	stmt := &ast.LetStatement{Token: p.curToken}
+	stmt := &ast.LetStatement{Token: p.curToken, FileName: p.l.FileName, PackageName: p.l.PackageName}
 
 	if !p.expectPeek(token.IDENT) {
 		return nil
@@ -188,7 +207,7 @@ func (p *Parser) parseLetStatement() ast.Statement {
 }
 
 func (p *Parser) parseReturnStatement() ast.Statement {
-	stmt := &ast.ReturnStatement{Token: p.curToken}
+	stmt := &ast.ReturnStatement{Token: p.curToken, FileName: p.l.FileName, PackageName: p.l.PackageName}
 
 	p.nextToken()
 	stmt.ReturnValue = p.parseExpression(LOWEST)
@@ -199,7 +218,7 @@ func (p *Parser) parseReturnStatement() ast.Statement {
 }
 
 func (p *Parser) parseExpressionStatement() ast.Statement {
-	stms := &ast.ExpressionStatement{Token: p.curToken}
+	stms := &ast.ExpressionStatement{Token: p.curToken, FileName: p.l.FileName, PackageName: p.l.PackageName}
 	stms.Expression = p.parseExpression(LOWEST)
 
 	if p.peekTokenIs(token.SEMICOLON) {
@@ -559,9 +578,4 @@ func (p *Parser) parseFloatLiteral() ast.Expression {
 	}
 	lit.Value = value
 	return lit
-}
-
-func (p *Parser) parsePackageExpress() ast.Expression {
-	fmt.Println("package..")
-	return nil
 }

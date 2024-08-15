@@ -11,12 +11,22 @@ type Lexer struct {
 	position    int    // 已经读取的字符的位置
 	readPostion int    // 准备读取的字符的位置
 	ch          byte   // 已经读取的字符
+	FileName    string // 源码文件
+	PackageName string // 包名
 }
 
 func New(input string) *Lexer {
 	l := &Lexer{input: input}
 	l.readChar()
 	return l
+}
+
+func (l *Lexer) SetFileName(fileName string) {
+	l.FileName = fileName
+}
+
+func (l *Lexer) SetPackageName(packageName string) {
+	l.PackageName = packageName
 }
 
 func (l *Lexer) readChar() {

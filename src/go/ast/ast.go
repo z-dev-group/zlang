@@ -56,9 +56,11 @@ func (i *Identifier) String() string {
 }
 
 type LetStatement struct {
-	Token token.Token
-	Name  *Identifier
-	Value Expression
+	Token       token.Token
+	Name        *Identifier
+	Value       Expression
+	FileName    string
+	PackageName string
 }
 
 func (ls *LetStatement) statementNode() {}
@@ -80,6 +82,8 @@ func (ls *LetStatement) String() string {
 type ReturnStatement struct {
 	Token       token.Token
 	ReturnValue Expression
+	FileName    string
+	PackageName string
 }
 
 func (rs *ReturnStatement) statementNode() {}
@@ -99,8 +103,10 @@ func (rs *ReturnStatement) String() string {
 }
 
 type ExpressionStatement struct {
-	Token      token.Token
-	Expression Expression
+	Token       token.Token
+	Expression  Expression
+	FileName    string
+	PackageName string
 }
 
 func (es *ExpressionStatement) statementNode() {}

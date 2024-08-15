@@ -846,3 +846,31 @@ func TestFloatExpression(t *testing.T) {
 		t.Fatalf("indet.Token.Literal is not %s, got %s", "123.45", ident.Token.Literal)
 	}
 }
+
+func TestPackageStatement(t *testing.T) {
+	input := "package test; let a = 12;"
+
+	l := lexer.New(input)
+	p := New(l)
+	l.SetFileName("xx.z")
+
+	program := p.ParseProgram()
+	if len(p.errors) > 0 {
+		fmt.Println(p.errors)
+	}
+	if len(program.Statements) != 1 {
+		t.Fatalf("program has not enough statements, expected 1, got=%d", len(program.Statements))
+	}
+
+	stms, ok := program.Statements[0].(*ast.LetStatement)
+	if !ok {
+		t.Fatalf("program.Statement[0] is not LetStatement, got=%T", program.Statements[0])
+	}
+	if stms.FileName != "xx.z" {
+		t.Fatalf("letStatement File is not xx.z, got = %s", stms.FileName)
+	}
+
+	if stms.PackageName != "test" {
+		t.Fatalf("letStatement Package is not test, got=%s", stms.PackageName)
+	}
+}
