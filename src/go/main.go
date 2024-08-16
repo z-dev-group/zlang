@@ -33,7 +33,8 @@ func main() {
 		}
 		fileContent, err := os.ReadFile(fileName)
 		if err != nil {
-			panic(err)
+			fmt.Println(err.Error())
+			os.Exit(-1)
 		}
 		sourceCode := string(fileContent)
 		sourceCodeLines := strings.Split(sourceCode, "\n")
