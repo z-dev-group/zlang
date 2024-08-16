@@ -14,9 +14,14 @@ puts("age:", person["sex"], "\n")
 let dog = {
   "name": "haha",
   "jobs": [],
-  "config": {}
+  "config": {},
+  "say": fn() {
+    var_dump("say....")
+  }
 }
 
 dog["jobs"]   = push(dog["jobs"], "xx")
 dog["config"] = set(dog["config"], "age", "1")
 var_dump(dog)
+
+dog["say"]()

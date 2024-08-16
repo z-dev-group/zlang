@@ -17,3 +17,52 @@ fn prefix(str, pre) {
   }
   return isPre
 }
+
+fn to_upper(str) {
+  return to_upper_or_lower(str, "upper")
+}
+
+fn first_to_upper(str) {
+  return first_to_upper_or_lower(str, "upper")
+}
+
+fn to_lower(str) {
+  return to_upper_or_lower(str, "lower")
+}
+
+fn first_to_lower(str) {
+  return first_to_upper_or_lower(str, "lower")
+}
+
+fn first_to_upper_or_lower(str, type) {
+  let retStr = ""
+  retStr = retStr + to_upper_or_lower_index(str, type, 0)
+  let i = 1
+  let strLen = len(str)
+  while (i < strLen) {
+    retStr = retStr + str[i]
+    i = i + 1
+  }
+  return retStr
+}
+fn to_upper_or_lower(str, type) {
+  let strLen = len(str)
+  let i = 0
+  let retStr = ""
+  while (i < strLen) {
+    retStr = retStr + to_upper_or_lower_index(str, type, i)
+    i = i + 1
+  }
+  return retStr
+}
+
+fn to_upper_or_lower_index(str, type, index) {
+  let char = str[index]
+  if (type == "upper") {
+    return char_to_upper(char)
+  }
+  if (type == "lower") {
+    return char_to_lower(char)
+  }
+  return char
+}

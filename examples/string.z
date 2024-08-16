@@ -12,3 +12,8 @@ while (i < len(hello)) {
 }
 
 var_dump(string.prefix("hello", "hel"), "\n")
+
+var_dump(string.to_upper("hello"))
+var_dump(string.first_to_upper("hello"))
+var_dump(string.to_lower("GOOD"))
+var_dump(string.first_to_lower("GOOD"))

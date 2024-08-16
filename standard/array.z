@@ -11,3 +11,21 @@ fn join(arr, seperator) {
   }
   return retStr
 }
+
+
+/*
+ index of array , if the value have more than one found, return the first
+ return -1 if not found
+*/
+fn index(array, value) {
+  let i = 0
+  let arrLen = len(array)
+  let index = -1
+  while (i < arrLen) {
+    if (array[i] == value) {
+      index = i
+    }
+    i = i + 1
+  }
+  return index
+}

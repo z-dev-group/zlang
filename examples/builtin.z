@@ -1,0 +1,7 @@
+import "typeof.z"
+
+var_dump(builtin_upper_letter_to_int_map)
+
+var_dump(char_to_int("a"))
+var_dump(char_to_upper("a"))
+var_dump(char_to_lower("A"))
