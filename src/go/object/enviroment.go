@@ -16,15 +16,26 @@ type Environment struct {
 	outer *Environment
 }
 
-func (e *Environment) Get(name string) (Object, bool) {
+func (e *Environment) Get(name string, packageName string) (Object, bool) {
 	obj, ok := e.store[name]
+	if !ok && packageName != "" {
+		varName := packageName + "." + name
+		obj, ok = e.store[varName]
+	}
 	if !ok && e.outer != nil {
-		obj, ok = e.outer.Get(name)
+		obj, ok = e.outer.Get(name, packageName)
 	}
 	return obj, ok
 }
 
-func (e *Environment) Set(name string, val Object) Object {
+func (e *Environment) Set(name string, val Object, packageName string) Object {
+	if packageName != "" {
+		name = packageName + "." + name
+	}
 	e.store[name] = val
 	return val
+}
+
+func (e *Environment) GetAll() map[string]Object {
+	return e.store
 }

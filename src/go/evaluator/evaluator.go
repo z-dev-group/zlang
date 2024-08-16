@@ -31,7 +31,7 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		return nativeBoolToBooleanObject(node.Value)
 	case *ast.LetStatement:
 		val := Eval(node.Value, env)
-		env.Set(node.Name.Value, val)
+		env.Set(node.Name.Value, val, node.PackageName)
 		return val
 	case *ast.PrefixExpression:
 		right := Eval(node.Right, env)
@@ -70,7 +70,7 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		body := node.Body
 		function := &object.Function{Parameters: params, Env: env, Body: body}
 		if node.Name != "" {
-			env.Set(node.Name, function)
+			env.Set(node.Name, function, node.PackageName)
 		}
 		return function
 	case *ast.CallExpression:
@@ -106,15 +106,15 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 	case *ast.HashLiteral:
 		return evalHashLiteral(node, env)
 	case *ast.AssignExpression:
-		_, ok := env.Get(node.Name.Value)
+		_, ok := env.Get(node.Name.Value, node.PackageName)
 		if !ok {
 			return newError("variable " + node.Name.Value + " not found")
 		}
 		val := Eval(node.Value, env)
-		env.Set(node.Name.Value, val)
+		env.Set(node.Name.Value, val, node.PackageName)
 		return val
 	case *ast.HashAssignExpress:
-		hashObject, ok := env.Get(node.Hash.Value)
+		hashObject, ok := env.Get(node.Hash.Value, node.Hash.PackageName)
 		if !ok {
 			return newError("hash variable " + node.Hash.Value + " not found")
 		}
@@ -234,7 +234,7 @@ func applyFunction(fn object.Object, args []object.Object) object.Object {
 func extendFunctionEnv(fn *object.Function, args []object.Object) *object.Environment {
 	env := object.NewEnclosedEnviroment(fn.Env)
 	for paramIdx, param := range fn.Parameters {
-		env.Set(param.Value, args[paramIdx])
+		env.Set(param.Value, args[paramIdx], "")
 	}
 	return env
 }
@@ -446,7 +446,7 @@ func evalBlockStatement(block *ast.BlockStatement, env *object.Environment) obje
 }
 
 func evalIdentifier(node *ast.Identifier, env *object.Environment) object.Object {
-	val, ok := env.Get(node.Value)
+	val, ok := env.Get(node.Value, node.PackageName)
 
 	if builtin, ok := Builtins[node.Value]; ok {
 		return builtin

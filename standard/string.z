@@ -1,3 +1,5 @@
+package string
+
 fn prefix(str, pre) {
   let preLen = len(pre)
   let strLen = len(str)

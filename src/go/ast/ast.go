@@ -43,8 +43,10 @@ func (p *Program) String() string {
 }
 
 type Identifier struct {
-	Token token.Token
-	Value string
+	Token       token.Token
+	Value       string
+	FileName    string
+	PackageName string
 }
 
 func (i *Identifier) expressionNode() {}
@@ -213,10 +215,12 @@ func (bs *BlockStatement) String() string {
 }
 
 type FunctionLiteral struct {
-	Token      token.Token
-	Parameters []*Identifier
-	Body       *BlockStatement
-	Name       string
+	Token       token.Token
+	Parameters  []*Identifier
+	Body        *BlockStatement
+	Name        string
+	FileName    string
+	PackageName string
 }
 
 func (fl *FunctionLiteral) expressionNode()      {}
@@ -347,9 +351,11 @@ func (bs *ImportStatement) String() string {
 }
 
 type AssignExpression struct {
-	Token token.Token
-	Name  *Identifier
-	Value Expression
+	Token       token.Token
+	Name        *Identifier
+	Value       Expression
+	FileName    string
+	PackageName string
 }
 
 func (ae *AssignExpression) expressionNode()      {}

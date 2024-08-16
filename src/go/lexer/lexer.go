@@ -171,7 +171,7 @@ func (l *Lexer) NextToken() token.Token {
 }
 
 func isLetter(ch byte) bool {
-	return 'a' <= ch && ch <= 'z' || 'A' <= ch && ch <= 'Z' || ch == '_'
+	return 'a' <= ch && ch <= 'z' || 'A' <= ch && ch <= 'Z' || ch == '_' || ch == '.'
 }
 
 func (l *Lexer) readIndentifier() string {

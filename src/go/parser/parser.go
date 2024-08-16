@@ -186,6 +186,8 @@ func (p *Parser) parseLetStatement() ast.Statement {
 	}
 
 	stmt.Name = &ast.Identifier{Token: p.curToken, Value: p.curToken.Literal}
+	stmt.Name.FileName = p.l.FileName
+	stmt.Name.PackageName = p.l.PackageName
 
 	if !p.expectPeek(token.ASSIGN) {
 		return nil
@@ -249,6 +251,8 @@ func (p *Parser) parseExpression(precedence int) ast.Expression {
 
 func (p *Parser) parseInditifier() ast.Expression {
 	identifier := &ast.Identifier{Token: p.curToken, Value: p.curToken.Literal}
+	identifier.FileName = p.l.FileName
+	identifier.PackageName = p.l.PackageName
 	if !p.peekTokenIs(token.ASSIGN) {
 		if !p.peekTokenIs(token.LBRACKET) {
 			return identifier
@@ -276,7 +280,7 @@ func (p *Parser) parseAssignHashExpress(identifier *ast.Identifier) ast.Expressi
 }
 
 func (p *Parser) parseAssignIdentifierExpress(identifier *ast.Identifier) ast.Expression {
-	stmt := &ast.AssignExpression{Token: p.curToken, Name: identifier}
+	stmt := &ast.AssignExpression{Token: p.curToken, Name: identifier, FileName: p.l.FileName, PackageName: p.l.PackageName}
 	p.nextToken()
 	p.nextToken()
 	stmt.Value = p.parseExpression(LOWEST)
@@ -396,7 +400,7 @@ func (p *Parser) parseBlockStatement() *ast.BlockStatement {
 }
 
 func (p *Parser) parseFunctionLiteral() ast.Expression {
-	lit := &ast.FunctionLiteral{Token: p.curToken}
+	lit := &ast.FunctionLiteral{Token: p.curToken, PackageName: p.l.PackageName, FileName: p.l.FileName}
 
 	if p.peekTokenIs(token.IDENT) {
 		p.nextToken()

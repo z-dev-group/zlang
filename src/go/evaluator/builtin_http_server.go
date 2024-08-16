@@ -31,7 +31,7 @@ func doHttpServe(w http.ResponseWriter, r *http.Request) {
 	}
 	handleGetData(r, pairs)
 	request := object.Hash{Pairs: pairs}
-	initedEnv.Set("request", object.Object(&request)) // pass request parameter
+	initedEnv.Set("request", object.Object(&request), "") // pass request parameter
 
 	function, ok := httpServerRoutes[path]
 	if ok {

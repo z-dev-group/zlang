@@ -17,7 +17,7 @@ func Eval(node ast.Node, env *object.Environment) (object.Object, string) {
 	switch node := node.(type) {
 	case *ast.LetStatement:
 		object, val := Eval(node.Value, env)
-		env.Set(node.Name.Value, object)
+		env.Set(node.Name.Value, object, node.PackageName)
 		objectType := object.Type()
 		switch objectType {
 		case "STRING":
@@ -88,7 +88,7 @@ func Eval(node ast.Node, env *object.Environment) (object.Object, string) {
 	case *ast.WhileExpression:
 		return evalWhileExpression(node, env)
 	case *ast.AssignExpression:
-		_, ok := env.Get(node.Name.Value)
+		_, ok := env.Get(node.Name.Value, node.PackageName)
 		if !ok {
 			fmt.Println("variable " + node.Name.Value + " not found")
 		}
@@ -135,7 +135,7 @@ func evalIfExpression(ie *ast.IfExpression, env *object.Environment) (object.Obj
 	return condition, compiledCode
 }
 func evalIdentifier(node *ast.Identifier, env *object.Environment) object.Object {
-	val, ok := env.Get(node.Value)
+	val, ok := env.Get(node.Value, node.PackageName)
 	if builtin, ok := evaluator.Builtins[node.Value]; ok {
 		return builtin
 	}

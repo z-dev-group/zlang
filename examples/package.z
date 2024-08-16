@@ -1,7 +1,14 @@
 package test
 
+import "../standard/string.z"
+
+let name = "seven"
+
+puts(name, "\n")
+
 fn hello() {
   var_dump("hello")
 }
 
-hello()
+var_dump(name)
+var_dump(string.prefix(name, "sex"))
