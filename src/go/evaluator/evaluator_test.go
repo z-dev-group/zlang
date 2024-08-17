@@ -102,6 +102,7 @@ func TestLetStatements(t *testing.T) {
 		{"let a = 5 * 5; a;", 25},
 		{"let a = 5; let b = a; let c = a + b + 5;", 15},
 		{"let a = 2; a = a + 1;", 3},
+		{"let a = 1; a += 2", 3},
 	}
 
 	for _, tt := range tests {

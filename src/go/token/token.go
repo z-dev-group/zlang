@@ -32,6 +32,8 @@ const (
 	ASTERISK = "*"
 	SLASH    = "/"
 
+	PLUSASSIGN = "+="
+
 	LT = "<"
 	LE = "<="
 	GT = ">"

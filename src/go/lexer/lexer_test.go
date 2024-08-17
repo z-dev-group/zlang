@@ -43,6 +43,7 @@ return []
 let money = 100.98
 package string
 name.age
+a += 1
 `
 
 	tests := []struct {
@@ -175,6 +176,10 @@ name.age
 		{token.IDENT, "string"},
 		{token.SEMICOLON, ";"},
 		{token.IDENT, "name.age"},
+		{token.SEMICOLON, ";"},
+		{token.IDENT, "a"},
+		{token.PLUSASSIGN, "+="},
+		{token.INT, "1"},
 		{token.SEMICOLON, ";"},
 		{token.EOF, ""},
 	}

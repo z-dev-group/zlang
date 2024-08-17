@@ -50,7 +50,14 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		if isError(right) {
 			return right
 		}
-		return evalInfixExpression(node.Operator, left, right)
+		infixValue := evalInfixExpression(node.Operator, left, right)
+		if node.Operator == "+=" { // need reset env data
+			leftIdentifier, ok := node.Left.(*ast.Identifier)
+			if ok {
+				env.Set(leftIdentifier.Value, infixValue, leftIdentifier.PackageName)
+			}
+		}
+		return infixValue
 	case *ast.IfExpression:
 		return evalIfExpression(node, env)
 	case *ast.WhileExpression:
@@ -351,6 +358,8 @@ func evalIntegerInfixExpression(operator string, left object.Object, right objec
 		return &object.Integer{Value: leftVal * rightVal}
 	case "/":
 		return &object.Integer{Value: leftVal / rightVal}
+	case "+=":
+		return &object.Integer{Value: leftVal + rightVal}
 	case "<":
 		return nativeBoolToBooleanObject(leftVal < rightVal)
 	case ">":
