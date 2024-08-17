@@ -44,3 +44,12 @@ https://github.com/pantingwen/zlang/commit/152a69af2d342639b2a0d9fcb5460899feebb
 
 支持了++， --
 https://github.com/pantingwen/zlang/commit/718735219b6f8b3fa4ede4d7b166bc923e89b31d
+
+处理if， while作用域的问题，同时 = 操作走中缀表达式，不要单独的表达式
+https://github.com/pantingwen/zlang/commit/986939b341c30284a5a264fdccdf183a6cd2e40f
+```
+if (2 > 1) {
+  let name = "seven"
+}
+var_dump(name) // 之前这里输出会是 seven 
+```
