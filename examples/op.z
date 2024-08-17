@@ -18,3 +18,15 @@ puts("f is:", f, "\n")
 let m = 10
 m += 3
 var_dump(m)
+
+let n = 10
+n -= 3
+var_dump(n)
+
+let o = 7
+o *= 3
+var_dump(o)
+
+let p = 8
+p /= 2
+var_dump(p)

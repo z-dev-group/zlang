@@ -32,7 +32,10 @@ const (
 	ASTERISK = "*"
 	SLASH    = "/"
 
-	PLUSASSIGN = "+="
+	PLUSASSIGN     = "+="
+	MINUSASSIGN    = "-="
+	ASTERISKASSIGN = "*="
+	SLASHASSIGN    = "/="
 
 	LT = "<"
 	LE = "<="

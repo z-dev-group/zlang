@@ -76,11 +76,20 @@ func (l *Lexer) NextToken() token.Token {
 			tok = newToken(token.BANG, l.ch)
 		}
 	case '-':
-		tok = newToken(token.MINUS, l.ch)
+		if l.peekChar() == '=' {
+			tok = l.newTokenWithTwoChar(token.MINUSASSIGN)
+		} else {
+			tok = newToken(token.MINUS, l.ch)
+		}
 	case '*':
-		tok = newToken(token.ASTERISK, l.ch)
+		if l.peekChar() == '=' {
+			tok = l.newTokenWithTwoChar(token.ASTERISKASSIGN)
+		} else {
+			tok = newToken(token.ASTERISK, l.ch)
+		}
 	case '/':
-		if l.peekChar() == '/' {
+		switch l.peekChar() {
+		case '/':
 			l.readChar()
 			for { // single line anntation
 				l.readChar()
@@ -89,7 +98,7 @@ func (l *Lexer) NextToken() token.Token {
 					return l.NextToken()
 				}
 			}
-		} else if l.peekChar() == '*' { // multiple lines annotation begin with /* end with */
+		case '*':
 			l.readChar()
 			for {
 				l.readChar()
@@ -104,7 +113,9 @@ func (l *Lexer) NextToken() token.Token {
 					return l.NextToken()
 				}
 			}
-		} else {
+		case '=':
+			tok = l.newTokenWithTwoChar(token.SLASHASSIGN)
+		default:
 			tok = newToken(token.SLASH, l.ch)
 		}
 	case '<':

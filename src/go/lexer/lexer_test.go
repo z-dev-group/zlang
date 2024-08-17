@@ -44,6 +44,9 @@ let money = 100.98
 package string
 name.age
 a += 1
+b -= 2
+c *= 3
+d /= 4
 `
 
 	tests := []struct {
@@ -180,6 +183,18 @@ a += 1
 		{token.IDENT, "a"},
 		{token.PLUSASSIGN, "+="},
 		{token.INT, "1"},
+		{token.SEMICOLON, ";"},
+		{token.IDENT, "b"},
+		{token.MINUSASSIGN, "-="},
+		{token.INT, "2"},
+		{token.SEMICOLON, ";"},
+		{token.IDENT, "c"},
+		{token.ASTERISKASSIGN, "*="},
+		{token.INT, "3"},
+		{token.SEMICOLON, ";"},
+		{token.IDENT, "d"},
+		{token.SLASHASSIGN, "/="},
+		{token.INT, "4"},
 		{token.SEMICOLON, ";"},
 		{token.EOF, ""},
 	}

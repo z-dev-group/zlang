@@ -51,7 +51,13 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 			return right
 		}
 		infixValue := evalInfixExpression(node.Operator, left, right)
-		if node.Operator == "+=" { // need reset env data
+		resetOperators := []string{
+			"+=",
+			"-=",
+			"*=",
+			"/=",
+		}
+		if isInStringArray(resetOperators, node.Operator) { // need reset env data
 			leftIdentifier, ok := node.Left.(*ast.Identifier)
 			if ok {
 				env.Set(leftIdentifier.Value, infixValue, leftIdentifier.PackageName)
@@ -351,15 +357,21 @@ func evalIntegerInfixExpression(operator string, left object.Object, right objec
 
 	switch operator {
 	case "+":
-		return &object.Integer{Value: leftVal + rightVal}
-	case "-":
-		return &object.Integer{Value: leftVal - rightVal}
-	case "*":
-		return &object.Integer{Value: leftVal * rightVal}
-	case "/":
-		return &object.Integer{Value: leftVal / rightVal}
+		fallthrough
 	case "+=":
 		return &object.Integer{Value: leftVal + rightVal}
+	case "-":
+		fallthrough
+	case "-=":
+		return &object.Integer{Value: leftVal - rightVal}
+	case "*":
+		fallthrough
+	case "*=":
+		return &object.Integer{Value: leftVal * rightVal}
+	case "/":
+		fallthrough
+	case "/=":
+		return &object.Integer{Value: leftVal / rightVal}
 	case "<":
 		return nativeBoolToBooleanObject(leftVal < rightVal)
 	case ">":
@@ -495,4 +507,15 @@ func nativeBoolToBooleanObject(input bool) *object.Boolean {
 		return TRUE
 	}
 	return FALSE
+}
+
+func isInStringArray(array []string, findStr string) bool {
+	isFind := false
+	for _, str := range array {
+		if str == findStr {
+			isFind = true
+			break
+		}
+	}
+	return isFind
 }
