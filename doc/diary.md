@@ -37,7 +37,10 @@ https://github.com/pantingwen/zlang/commit/5af6b9988d180463f2eba9b8be78afe289d94
 区别点在于， += 操作，需要更新变量的值，方便后续使用
 
 顺便优化一下词法解析器，复用 newTokenWithTwoChar，很多token，先 >=, <=, +=, -= 都可以用
-
 https://github.com/pantingwen/zlang/commit/893cc0f015f87fbfc10273fa1a635dfc0a901edb
 
 再顺便把 -=,*=,/= 都支持一下吧
+https://github.com/pantingwen/zlang/commit/152a69af2d342639b2a0d9fcb5460899feebb74f
+
+支持了++， --
+https://github.com/pantingwen/zlang/commit/718735219b6f8b3fa4ede4d7b166bc923e89b31d
