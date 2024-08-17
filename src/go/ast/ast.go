@@ -350,28 +350,6 @@ func (bs *ImportStatement) String() string {
 	return out.String()
 }
 
-type AssignExpression struct {
-	Token       token.Token
-	Name        *Identifier
-	Value       Expression
-	FileName    string
-	PackageName string
-}
-
-func (ae *AssignExpression) expressionNode()      {}
-func (ae *AssignExpression) TokenLiteral() string { return ae.Token.Literal }
-func (ae *AssignExpression) String() string {
-	var out bytes.Buffer
-	out.WriteString(ae.TokenLiteral() + " ")
-	out.WriteString(ae.Name.String())
-	out.WriteString(" = ")
-	if ae.Value != nil {
-		out.WriteString(ae.Value.String())
-	}
-	out.WriteString(";")
-	return out.String()
-}
-
 type WhileExpression struct {
 	Token     token.Token
 	Condition Expression

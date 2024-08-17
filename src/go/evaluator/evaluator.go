@@ -58,11 +58,17 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 			"/=",
 			"++",
 			"--",
+			"=",
 		}
 		if isInStringArray(resetOperators, node.Operator) { // need reset env data
 			leftIdentifier, ok := node.Left.(*ast.Identifier)
 			if ok {
-				env.Set(leftIdentifier.Value, infixValue, leftIdentifier.PackageName)
+				isFromOuter := env.IsFormOuter(leftIdentifier.Value, leftIdentifier.PackageName)
+				if isFromOuter {
+					env.OuterSet(leftIdentifier.Value, infixValue, leftIdentifier.PackageName)
+				} else {
+					env.Set(leftIdentifier.Value, infixValue, leftIdentifier.PackageName)
+				}
 			}
 		}
 		return infixValue
@@ -120,14 +126,6 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		return evalIndexExpression(left, index)
 	case *ast.HashLiteral:
 		return evalHashLiteral(node, env)
-	case *ast.AssignExpression:
-		_, ok := env.Get(node.Name.Value, node.PackageName)
-		if !ok {
-			return newError("variable " + node.Name.Value + " not found")
-		}
-		val := Eval(node.Value, env)
-		env.Set(node.Name.Value, val, node.PackageName)
-		return val
 	case *ast.HashAssignExpress:
 		hashObject, ok := env.Get(node.Hash.Value, node.Hash.PackageName)
 		if !ok {
@@ -275,6 +273,7 @@ func evalExpressions(exps []ast.Expression, env *object.Environment) []object.Ob
 }
 
 func evalIfExpression(ie *ast.IfExpression, env *object.Environment) object.Object {
+	env = object.NewEnclosedEnviroment(env)
 	condition := Eval(ie.Condition, env)
 
 	if isError(condition) {
@@ -291,6 +290,7 @@ func evalIfExpression(ie *ast.IfExpression, env *object.Environment) object.Obje
 }
 
 func evalWhileExpression(we *ast.WhileExpression, env *object.Environment) object.Object {
+	env = object.NewEnclosedEnviroment(env)
 	condition := Eval(we.Condition, env)
 	if isError(condition) {
 		return condition
@@ -321,6 +321,8 @@ func isTruthy(obj object.Object) bool {
 
 func evalInfixExpression(operator string, left object.Object, right object.Object) object.Object {
 	switch {
+	case operator == "=":
+		return right
 	case left.Type() == object.INTEGER_OBJ && right.Type() == object.INTEGER_OBJ:
 		return evalIntegerInfixExpression(operator, left, right)
 	case left.Type() == object.STRING_OBJ && right.Type() == object.STRING_OBJ:

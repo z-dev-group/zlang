@@ -43,6 +43,7 @@ var precedences = map[token.TokenType]int{
 	token.SLASHASSIGN:    LESSGRATER,
 	token.PLUSPLUS:       LESSGRATER,
 	token.MINUSMINUS:     LESSGRATER,
+	token.ASSIGN:         LESSGRATER,
 	token.PLUS:           SUM,
 	token.MINUS:          SUM,
 	token.SLASH:          PRODUCT,
@@ -111,6 +112,7 @@ func New(l *lexer.Lexer) *Parser {
 	p.registerInfix(token.SLASHASSIGN, p.parseInfixExpression)
 	p.registerInfix(token.PLUSPLUS, p.parseInfixExpression)
 	p.registerInfix(token.MINUSMINUS, p.parseInfixExpression)
+	p.registerInfix(token.ASSIGN, p.parseInfixExpression)
 	return p
 }
 
@@ -265,13 +267,10 @@ func (p *Parser) parseInditifier() ast.Expression {
 	identifier := &ast.Identifier{Token: p.curToken, Value: p.curToken.Literal}
 	identifier.FileName = p.l.FileName
 	identifier.PackageName = p.l.PackageName
-	if !p.peekTokenIs(token.ASSIGN) {
-		if !p.peekTokenIs(token.LBRACKET) {
-			return identifier
-		}
+	if p.peekTokenIs(token.LBRACKET) {
 		return p.parseAssignHashExpress(identifier)
 	}
-	return p.parseAssignIdentifierExpress(identifier)
+	return identifier
 }
 
 func (p *Parser) parseAssignHashExpress(identifier *ast.Identifier) ast.Expression {
@@ -288,21 +287,6 @@ func (p *Parser) parseAssignHashExpress(identifier *ast.Identifier) ast.Expressi
 	p.nextToken()
 	value := p.parseExpression(LOWEST)
 	stmt := &ast.HashAssignExpress{Token: p.curToken, Hash: *identifier, Index: index, Value: value}
-	return stmt
-}
-
-func (p *Parser) parseAssignIdentifierExpress(identifier *ast.Identifier) ast.Expression {
-	stmt := &ast.AssignExpression{Token: p.curToken, Name: identifier, FileName: p.l.FileName, PackageName: p.l.PackageName}
-	p.nextToken()
-	p.nextToken()
-	stmt.Value = p.parseExpression(LOWEST)
-
-	if fl, ok := stmt.Value.(*ast.FunctionLiteral); ok {
-		fl.Name = stmt.Name.Value
-	}
-	if p.peekTokenIs(token.SEMICOLON) {
-		p.nextToken()
-	}
 	return stmt
 }
 

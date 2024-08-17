@@ -214,7 +214,8 @@ func TestParsingInfixExpressions(t *testing.T) {
 		{"1-=5", 1, "-=", 5},
 		{"1*=5", 1, "*=", 5},
 		{"1/=5", 1, "/=", 5},
-		{"1++", 1, "++", 0},
+		{"1++", 1, "++", 1},
+		{"1=1", 1, "=", 1},
 	}
 
 	for _, tt := range infixTests {

@@ -290,20 +290,6 @@ func (c *Compile) Compile(node ast.Node) error {
 			}
 		}
 		c.emit(code.OpCall, len(node.Arguments))
-	case *ast.AssignExpression:
-		symbol, ok := c.symbolTable.Resolve(node.Name.Value)
-		if !ok {
-			return fmt.Errorf("undefined variable %s \n", node.Name.Value)
-		}
-		err := c.Compile(node.Value)
-		if err != nil {
-			return err
-		}
-		if symbol.Scope == GlobalScope {
-			c.emit(code.OpSetGlobal, symbol.Index)
-		} else {
-			c.emit(code.OpSetLocal, symbol.Index)
-		}
 	case *ast.WhileExpression:
 		err := c.Compile(node.Condition)
 		if err != nil {

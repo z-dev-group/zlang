@@ -126,6 +126,8 @@ func TestIfElseExpression(t *testing.T) {
 		{"if (1 > 2) { 10; }", nil},
 		{"if (1 > 2) { 10; } else { 20; }", 20},
 		{"if (1 < 2) { 10; } else { 20; }", 10},
+		{"let a = 1; if (a < 2) { a = a + 1; } else { 20; }; a", 2},
+		{`if (1 < 2) {let a = 7; }; a`, object.Error{Message: "identifier not found:a"}},
 	}
 
 	for _, tt := range tests {
@@ -134,7 +136,12 @@ func TestIfElseExpression(t *testing.T) {
 		if ok {
 			testIntegerObject(t, evaluated, int64(integer))
 		} else {
-			testNullObject(t, evaluated)
+			objectError, ok := tt.expected.(object.Error)
+			if ok {
+				testErrorObject(t, evaluated, objectError)
+			} else {
+				testNullObject(t, evaluated)
+			}
 		}
 	}
 }
@@ -144,14 +151,21 @@ func TestWhileStatement(t *testing.T) {
 		input    string
 		expected interface{}
 	}{
-		{"let a = 0; while(a<10) {a = a +1 ;}; a;", 10}}
+		{"let a = 0; while(a<10) {a = a + 1 ;}; a;", 10},
+		{"let a = 0; while(a<10) {a = a + 1 ; let z = 9}; z;", object.Error{Message: "identifier not found:z"}},
+	}
 	for _, tt := range tests {
 		evaluated := testEval(tt.input)
 		integer, ok := tt.expected.(int)
 		if ok {
 			testIntegerObject(t, evaluated, int64(integer))
 		} else {
-			testNullObject(t, evaluated)
+			objectError, ok := tt.expected.(object.Error)
+			if ok {
+				testErrorObject(t, evaluated, objectError)
+			} else {
+				testNullObject(t, evaluated)
+			}
 		}
 	}
 }
@@ -454,6 +468,19 @@ func testIntegerObject(t *testing.T, obj object.Object, expected int64) bool {
 
 	if result.Value != expected {
 		t.Errorf("object has wrong value, got=%d, want=%d", result.Value, expected)
+		return false
+	}
+	return true
+}
+
+func testErrorObject(t *testing.T, obj object.Object, err object.Error) bool {
+	evalutedError, ok := obj.(*object.Error)
+	if !ok {
+		t.Errorf("evaluted value is not error")
+		return false
+	}
+	if evalutedError.Message != err.Message {
+		t.Errorf("error msg is not same, expected %s, got=%s", err.Message, evalutedError.Message)
 		return false
 	}
 	return true
