@@ -41,7 +41,7 @@ fn first_to_upper_or_lower(str, type) {
   let strLen = len(str)
   while (i < strLen) {
     retStr = retStr + str[i]
-    i = i + 1
+    i++
   }
   return retStr
 }
@@ -51,7 +51,7 @@ fn to_upper_or_lower(str, type) {
   let retStr = ""
   while (i < strLen) {
     retStr = retStr + to_upper_or_lower_index(str, type, i)
-    i = i + 1
+    i++
   }
   return retStr
 }
