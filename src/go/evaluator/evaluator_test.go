@@ -106,6 +106,7 @@ func TestLetStatements(t *testing.T) {
 		{"let a = 5; a -= 2; a", 3},
 		{"let a = 5; a *= 2; a", 10},
 		{"let a = 6; a /= 2; a", 3},
+		{"let a = 6; a++; a", 7},
 	}
 
 	for _, tt := range tests {

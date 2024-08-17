@@ -36,6 +36,8 @@ const (
 	MINUSASSIGN    = "-="
 	ASTERISKASSIGN = "*="
 	SLASHASSIGN    = "/="
+	PLUSPLUS       = "++"
+	MINUSMINUS     = "--"
 
 	LT = "<"
 	LE = "<="

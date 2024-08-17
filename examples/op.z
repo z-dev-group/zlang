@@ -30,3 +30,8 @@ var_dump(o)
 let p = 8
 p /= 2
 var_dump(p)
+
+p++
+var_dump(p)
+p--
+var_dump(p)

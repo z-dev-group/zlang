@@ -47,6 +47,8 @@ a += 1
 b -= 2
 c *= 3
 d /= 4
+i++
+i--
 `
 
 	tests := []struct {
@@ -195,6 +197,12 @@ d /= 4
 		{token.IDENT, "d"},
 		{token.SLASHASSIGN, "/="},
 		{token.INT, "4"},
+		{token.SEMICOLON, ";"},
+		{token.IDENT, "i"},
+		{token.PLUSPLUS, "++"},
+		{token.SEMICOLON, ";"},
+		{token.IDENT, "i"},
+		{token.MINUSMINUS, "--"},
 		{token.SEMICOLON, ";"},
 		{token.EOF, ""},
 	}

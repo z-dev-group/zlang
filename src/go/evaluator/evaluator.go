@@ -56,6 +56,8 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 			"-=",
 			"*=",
 			"/=",
+			"++",
+			"--",
 		}
 		if isInStringArray(resetOperators, node.Operator) { // need reset env data
 			leftIdentifier, ok := node.Left.(*ast.Identifier)
@@ -358,9 +360,13 @@ func evalIntegerInfixExpression(operator string, left object.Object, right objec
 	switch operator {
 	case "+":
 		fallthrough
+	case "++":
+		fallthrough
 	case "+=":
 		return &object.Integer{Value: leftVal + rightVal}
 	case "-":
+		fallthrough
+	case "--":
 		fallthrough
 	case "-=":
 		return &object.Integer{Value: leftVal - rightVal}

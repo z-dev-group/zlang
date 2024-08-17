@@ -50,7 +50,6 @@ func main() {
 				sourceCode = builtinLine + sourceCode
 			}
 		}
-		sourceCode = sourceCode + "\n"
 		switch operation {
 		case "run":
 			cli.RunSourceCode(sourceCode, mode, fileName)

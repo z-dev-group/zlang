@@ -41,6 +41,8 @@ var precedences = map[token.TokenType]int{
 	token.MINUSASSIGN:    LESSGRATER,
 	token.ASTERISKASSIGN: LESSGRATER,
 	token.SLASHASSIGN:    LESSGRATER,
+	token.PLUSPLUS:       LESSGRATER,
+	token.MINUSMINUS:     LESSGRATER,
 	token.PLUS:           SUM,
 	token.MINUS:          SUM,
 	token.SLASH:          PRODUCT,
@@ -107,6 +109,8 @@ func New(l *lexer.Lexer) *Parser {
 	p.registerInfix(token.MINUSASSIGN, p.parseInfixExpression)
 	p.registerInfix(token.ASTERISKASSIGN, p.parseInfixExpression)
 	p.registerInfix(token.SLASHASSIGN, p.parseInfixExpression)
+	p.registerInfix(token.PLUSPLUS, p.parseInfixExpression)
+	p.registerInfix(token.MINUSMINUS, p.parseInfixExpression)
 	return p
 }
 
@@ -328,7 +332,12 @@ func (p *Parser) parseInfixExpression(left ast.Expression) ast.Expression {
 	}
 	precedence := p.curPrecedence()
 	p.nextToken()
-	expression.Right = p.parseExpression(precedence)
+	if p.curToken.Literal == token.SEMICOLON {
+		oneToken := token.Token{Literal: "1", Type: token.INT}
+		expression.Right = ast.Expression(&ast.IntegerLiteral{Value: 1, Token: oneToken})
+	} else {
+		expression.Right = p.parseExpression(precedence)
+	}
 	return expression
 }
 
