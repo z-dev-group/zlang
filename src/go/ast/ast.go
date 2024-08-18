@@ -397,3 +397,13 @@ type FloatLiteral struct {
 func (fl *FloatLiteral) expressionNode()      {}
 func (fl *FloatLiteral) TokenLiteral() string { return fl.Token.Literal }
 func (fl *FloatLiteral) String() string       { return fl.Token.Literal }
+
+type BreakStatement struct {
+	Token token.Token
+}
+
+func (bs *BreakStatement) expressionNode() {}
+func (bs *BreakStatement) TokenLiteral() string {
+	return bs.Token.Literal
+}
+func (bs *BreakStatement) String() string { return bs.Token.Literal }

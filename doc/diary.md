@@ -53,3 +53,7 @@ if (2 > 1) {
 }
 var_dump(name) // 之前这里输出会是 seven 
 ```
+
+### 2024-08-18
+
+支持break关键字，在while语句中，遇到break跳出循环,后续for也将支持break

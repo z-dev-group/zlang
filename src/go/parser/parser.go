@@ -113,6 +113,7 @@ func New(l *lexer.Lexer) *Parser {
 	p.registerInfix(token.PLUSPLUS, p.parseInfixExpression)
 	p.registerInfix(token.MINUSMINUS, p.parseInfixExpression)
 	p.registerInfix(token.ASSIGN, p.parseInfixExpression)
+	p.registerPrefix(token.BREAK, p.parseBreakStatement)
 	return p
 }
 
@@ -583,4 +584,8 @@ func (p *Parser) parseFloatLiteral() ast.Expression {
 	}
 	lit.Value = value
 	return lit
+}
+
+func (p *Parser) parseBreakStatement() ast.Expression {
+	return &ast.BreakStatement{Token: p.curToken}
 }

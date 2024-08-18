@@ -23,6 +23,7 @@ const (
 	STRING   = "STRING"
 	IMPORT   = "IMPORT"
 	WHILE    = "WHILE"
+	BREAK    = "BREAK"
 	PACKAGE  = "PACKAGE"
 
 	ASSIGN   = "="
@@ -73,6 +74,7 @@ var keywords = map[string]TokenType{
 	"import":  IMPORT,
 	"while":   WHILE,
 	"package": PACKAGE,
+	"break":   BREAK,
 }
 
 func LookIndent(indent string) TokenType {

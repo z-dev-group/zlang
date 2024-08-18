@@ -8,12 +8,14 @@ func NewEnclosedEnviroment(outer *Environment) *Environment {
 
 func NewEnvironment() *Environment {
 	s := make(map[string]Object)
-	return &Environment{store: s, outer: nil}
+	Context := make(map[string]string)
+	return &Environment{store: s, outer: nil, Context: Context}
 }
 
 type Environment struct {
-	store map[string]Object
-	outer *Environment
+	store   map[string]Object
+	Context map[string]string
+	outer   *Environment
 }
 
 func (e *Environment) Get(name string, packageName string) (Object, bool) {
@@ -65,4 +67,11 @@ func (e *Environment) OuterSet(name string, val Object, packageName string) Obje
 
 func (e *Environment) GetAll() map[string]Object {
 	return e.store
+}
+
+func (e *Environment) Outer() *Environment {
+	if e.outer != nil {
+		return e.outer
+	}
+	return e
 }

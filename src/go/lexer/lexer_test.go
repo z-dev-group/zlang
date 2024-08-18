@@ -49,6 +49,7 @@ c *= 3
 d /= 4
 i++
 i--
+break
 `
 
 	tests := []struct {
@@ -203,6 +204,8 @@ i--
 		{token.SEMICOLON, ";"},
 		{token.IDENT, "i"},
 		{token.MINUSMINUS, "--"},
+		{token.SEMICOLON, ";"},
+		{token.BREAK, "break"},
 		{token.SEMICOLON, ";"},
 		{token.EOF, ""},
 	}

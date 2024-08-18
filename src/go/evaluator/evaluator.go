@@ -7,10 +7,14 @@ import (
 )
 
 var (
-	NULL      = &object.Null{}
-	TRUE      = &object.Boolean{Value: true}
-	FALSE     = &object.Boolean{Value: false}
-	initedEnv object.Environment
+	NULL         = &object.Null{}
+	TRUE         = &object.Boolean{Value: true}
+	FALSE        = &object.Boolean{Value: false}
+	initedEnv    object.Environment
+	withBreakKey = "is_with_break"
+	isWithBreak  = "Y"
+	notWithBreak = "N"
+	breadKeyWord = "break"
 )
 
 func isError(obj object.Object) bool {
@@ -281,9 +285,17 @@ func evalIfExpression(ie *ast.IfExpression, env *object.Environment) object.Obje
 	}
 
 	if isTruthy(condition) {
-		return Eval(ie.Consequence, env)
+		consequenceVal := Eval(ie.Consequence, env)
+		if env.Context[withBreakKey] == isWithBreak {
+			env.Outer().Context[withBreakKey] = isWithBreak
+		}
+		return consequenceVal
 	} else if ie.Alternative != nil {
-		return Eval(ie.Alternative, env)
+		alternativeVal := Eval(ie.Alternative, env)
+		if env.Context[withBreakKey] == isWithBreak {
+			env.Outer().Context[withBreakKey] = isWithBreak
+		}
+		return alternativeVal
 	} else {
 		return NULL
 	}
@@ -295,9 +307,13 @@ func evalWhileExpression(we *ast.WhileExpression, env *object.Environment) objec
 	if isError(condition) {
 		return condition
 	}
+	env.Context[withBreakKey] = notWithBreak
 
 	for isTruthy(condition) {
 		bodyResult := Eval(we.Body, env)
+		if env.Context[withBreakKey] == isWithBreak {
+			break
+		}
 		condition := Eval(we.Condition, env)
 		if !isTruthy(condition) {
 			return bodyResult
@@ -462,6 +478,10 @@ func evalBangOperatorExpression(right object.Object) object.Object {
 func evalBlockStatement(block *ast.BlockStatement, env *object.Environment) object.Object {
 	var result object.Object
 	for _, statement := range block.Statements {
+		if statement.TokenLiteral() == breadKeyWord {
+			env.Context[withBreakKey] = isWithBreak
+			return result
+		}
 		result = Eval(statement, env)
 		if result != nil {
 			rt := result.Type()

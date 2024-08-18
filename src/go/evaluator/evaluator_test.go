@@ -152,6 +152,7 @@ func TestWhileStatement(t *testing.T) {
 		expected interface{}
 	}{
 		{"let a = 0; while(a<10) {a = a + 1 ;}; a;", 10},
+		{"let a = 0; while(a<10) {a = a + 1; if (a > 3) {break;}}; a;", 4},
 		{"let a = 0; while(a<10) {a = a + 1 ; let z = 9}; z;", object.Error{Message: "identifier not found:z"}},
 	}
 	for _, tt := range tests {

@@ -338,7 +338,7 @@ func TestBoolExpression(t *testing.T) {
 	}
 }
 func TestWhileExpression(t *testing.T) {
-	input := "while (x < y) {x}"
+	input := "while (x < y) {x; break;}"
 	l := lexer.New(input)
 	p := New(l)
 	program := p.ParseProgram()
@@ -360,8 +360,8 @@ func TestWhileExpression(t *testing.T) {
 	if !testInfixExpression(t, exp.Condition, "x", "<", "y") {
 		return
 	}
-	if len(exp.Body.Statements) != 1 {
-		t.Fatalf("exp.Body.Statements len is not 1, got=%d", len(exp.Body.Statements))
+	if len(exp.Body.Statements) != 2 {
+		t.Fatalf("exp.Body.Statements len is not 2, got=%d", len(exp.Body.Statements))
 	}
 	body, ok := exp.Body.Statements[0].(*ast.ExpressionStatement)
 	if !ok {
@@ -370,6 +370,15 @@ func TestWhileExpression(t *testing.T) {
 
 	if !testIdentifier(t, body.Expression, "x") {
 		return
+	}
+	stmt, ok = exp.Body.Statements[1].(*ast.ExpressionStatement)
+
+	if !ok {
+		t.Fatalf("exp.body.Statement[1] is not ast.ExpressionStatement, got=%s", exp.Body.Statements[1].String())
+	} else {
+		if stmt.Token.Literal != "break" {
+			t.Fatalf("express not break")
+		}
 	}
 }
 func TestIfExpression(t *testing.T) {

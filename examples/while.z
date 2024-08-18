@@ -6,3 +6,19 @@ while (a > 0) {
   a--
 }
 puts("c is: ", c, "\n")
+
+let i = 0;
+while(true) {
+  i++
+  var_dump(i)
+  if (i > 7) {
+    if (i > 7) {
+      break
+    }
+  }
+  let j = 0;
+  while (j < 3) {
+    puts("j", j, "\n")
+    j++
+  }
+}
