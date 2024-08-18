@@ -151,6 +151,8 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		return val
 	case *ast.FloatLiteral:
 		return &object.Float{Value: node.Value}
+	case *ast.ForExpression:
+		return evalForExpression(node, env)
 	}
 	return nil
 }
@@ -546,4 +548,27 @@ func isInStringArray(array []string, findStr string) bool {
 		}
 	}
 	return isFind
+}
+
+func evalForExpression(fe *ast.ForExpression, env *object.Environment) object.Object {
+	env = object.NewEnclosedEnviroment(env)
+	Eval(fe.Initor, env)
+	condition := Eval(fe.Condition, env)
+	if isError(condition) {
+		return condition
+	}
+	env.Context[withBreakKey] = notWithBreak
+
+	for isTruthy(condition) {
+		bodyResult := Eval(fe.Body, env)
+		Eval(fe.After, env)
+		if env.Context[withBreakKey] == isWithBreak {
+			break
+		}
+		condition := Eval(fe.Condition, env)
+		if !isTruthy(condition) {
+			return bodyResult
+		}
+	}
+	return NULL
 }

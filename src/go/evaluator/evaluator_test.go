@@ -486,3 +486,26 @@ func testErrorObject(t *testing.T, obj object.Object, err object.Error) bool {
 	}
 	return true
 }
+
+func TestForStatement(t *testing.T) {
+	tests := []struct {
+		input    string
+		expected interface{}
+	}{
+		{"let a = 0; for (let i = 1; i < 10; i++) { a = i }; a;", 9},
+	}
+	for _, tt := range tests {
+		evaluated := testEval(tt.input)
+		integer, ok := tt.expected.(int)
+		if ok {
+			testIntegerObject(t, evaluated, int64(integer))
+		} else {
+			objectError, ok := tt.expected.(object.Error)
+			if ok {
+				testErrorObject(t, evaluated, objectError)
+			} else {
+				testNullObject(t, evaluated)
+			}
+		}
+	}
+}

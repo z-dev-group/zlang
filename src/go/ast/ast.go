@@ -398,12 +398,39 @@ func (fl *FloatLiteral) expressionNode()      {}
 func (fl *FloatLiteral) TokenLiteral() string { return fl.Token.Literal }
 func (fl *FloatLiteral) String() string       { return fl.Token.Literal }
 
-type BreakStatement struct {
+type BreakExpression struct {
 	Token token.Token
 }
 
-func (bs *BreakStatement) expressionNode() {}
-func (bs *BreakStatement) TokenLiteral() string {
-	return bs.Token.Literal
+func (be *BreakExpression) expressionNode() {}
+func (be *BreakExpression) TokenLiteral() string {
+	return be.Token.Literal
 }
-func (bs *BreakStatement) String() string { return bs.Token.Literal }
+func (be *BreakExpression) String() string { return be.Token.Literal }
+
+type ForExpression struct {
+	Token     token.Token
+	Initor    Statement
+	Condition Expression
+	Body      *BlockStatement
+	After     Expression
+}
+
+func (fe *ForExpression) expressionNode() {}
+func (fe *ForExpression) TokenLiteral() string {
+	return fe.Token.Literal
+}
+func (fe *ForExpression) String() string {
+	var out bytes.Buffer
+	out.WriteString("for")
+	out.WriteString("(")
+	out.WriteString(fe.Initor.String())
+	out.WriteString(";")
+	out.WriteString(fe.Condition.String())
+	out.WriteString(";")
+	out.WriteString(fe.After.String())
+	out.WriteString(")")
+	out.WriteString("{")
+	out.WriteString("}")
+	return out.String()
+}

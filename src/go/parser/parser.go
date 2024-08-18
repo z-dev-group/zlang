@@ -113,7 +113,8 @@ func New(l *lexer.Lexer) *Parser {
 	p.registerInfix(token.PLUSPLUS, p.parseInfixExpression)
 	p.registerInfix(token.MINUSMINUS, p.parseInfixExpression)
 	p.registerInfix(token.ASSIGN, p.parseInfixExpression)
-	p.registerPrefix(token.BREAK, p.parseBreakStatement)
+	p.registerPrefix(token.BREAK, p.parseBreakExpression)
+	p.registerPrefix(token.FOR, p.parseForExpression)
 	return p
 }
 
@@ -316,11 +317,11 @@ func (p *Parser) parseInfixExpression(left ast.Expression) ast.Expression {
 		Left:     left,
 	}
 	precedence := p.curPrecedence()
-	p.nextToken()
-	if p.curToken.Literal == token.SEMICOLON {
+	if p.peekTokenIs(token.SEMICOLON) || p.peekTokenIs(token.RPAREN) {
 		oneToken := token.Token{Literal: "1", Type: token.INT}
 		expression.Right = ast.Expression(&ast.IntegerLiteral{Value: 1, Token: oneToken})
 	} else {
+		p.nextToken()
 		expression.Right = p.parseExpression(precedence)
 	}
 	return expression
@@ -586,6 +587,28 @@ func (p *Parser) parseFloatLiteral() ast.Expression {
 	return lit
 }
 
-func (p *Parser) parseBreakStatement() ast.Expression {
-	return &ast.BreakStatement{Token: p.curToken}
+func (p *Parser) parseBreakExpression() ast.Expression {
+	return &ast.BreakExpression{Token: p.curToken}
+}
+
+func (p *Parser) parseForExpression() ast.Expression {
+	forExpression := &ast.ForExpression{Token: p.curToken}
+	if !p.expectPeek(token.LPAREN) {
+		return nil
+	}
+	p.nextToken()
+	forExpression.Initor = p.parseLetStatement()
+	p.nextToken()
+	forExpression.Condition = p.parseExpression(LOWEST)
+	p.nextToken()
+	p.nextToken()
+	forExpression.After = p.parseExpression(LOWEST)
+	if !p.expectPeek(token.RPAREN) {
+		return nil
+	}
+	if !p.expectPeek(token.LBRACE) {
+		return nil
+	}
+	forExpression.Body = p.parseBlockStatement()
+	return forExpression
 }

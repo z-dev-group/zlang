@@ -889,3 +889,20 @@ func TestPackageStatement(t *testing.T) {
 		t.Fatalf("letStatement Package is not test, got=%s", stms.PackageName)
 	}
 }
+
+func TestForStatement(t *testing.T) {
+	input := "for (let i = 0; i < 10; i++) {}"
+	l := lexer.New(input)
+	p := New(l)
+	program := p.ParseProgram()
+
+	if len(p.errors) > 0 {
+		fmt.Println(p.errors)
+	}
+
+	if len(program.Statements) != 1 {
+		fmt.Println(program.Statements)
+		t.Fatalf("expected program.Statements len is 1, got=%d", len(program.Statements))
+		fmt.Println(program.Statements)
+	}
+}

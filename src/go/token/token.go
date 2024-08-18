@@ -25,6 +25,7 @@ const (
 	WHILE    = "WHILE"
 	BREAK    = "BREAK"
 	PACKAGE  = "PACKAGE"
+	FOR      = "FOR"
 
 	ASSIGN   = "="
 	PLUS     = "+"
@@ -75,6 +76,7 @@ var keywords = map[string]TokenType{
 	"while":   WHILE,
 	"package": PACKAGE,
 	"break":   BREAK,
+	"for":     FOR,
 }
 
 func LookIndent(indent string) TokenType {

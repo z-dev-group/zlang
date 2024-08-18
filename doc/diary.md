@@ -57,3 +57,26 @@ var_dump(name) // 之前这里输出会是 seven
 ### 2024-08-18
 
 支持break关键字，在while语句中，遇到break跳出循环,后续for也将支持break
+
+实现for语句
+```
+let count = 0
+
+for (let i = 0; i < 10; i++) {
+  count = i
+}
+
+var_dump(count) // expected 9
+
+for (let i = 0; i < 10; i++) {
+  count = i
+  if (count > 5) {
+    break
+  }
+}
+
+var_dump(count) // expected 6
+```
+for 整体和while实现差不多，只是多个Initor，After，Initor是在程序循环前调用，After是每次body执行后调用，常用来修改条件
+
+理论上可以共用，这里还是很开

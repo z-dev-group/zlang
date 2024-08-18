@@ -50,6 +50,7 @@ d /= 4
 i++
 i--
 break
+for
 `
 
 	tests := []struct {
@@ -206,6 +207,8 @@ break
 		{token.MINUSMINUS, "--"},
 		{token.SEMICOLON, ";"},
 		{token.BREAK, "break"},
+		{token.SEMICOLON, ";"},
+		{token.FOR, "for"},
 		{token.SEMICOLON, ";"},
 		{token.EOF, ""},
 	}
