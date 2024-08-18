@@ -80,3 +80,43 @@ var_dump(count) // expected 6
 for 整体和while实现差不多，只是多个Initor，After，Initor是在程序循环前调用，After是每次body执行后调用，常用来修改条件
 
 理论上可以共用，这里还是很开
+
+接下来开始搞搞oop，目前程序hash支持函数的方式，就是对象方法
+
+```
+let dog = {
+  "name": "siri"
+  "say": fn(name) {
+    var_dump(name + " is wangwang...")
+  }
+}
+
+dog["say"](dog["name"])
+```
+添加语法糖，支持形如以下格式
+
+```
+class Dog {
+  name: "siri",
+  say: fn() {
+    var_dump(this->name + "is wangwang...")
+  }
+}
+dog = new Dog()
+dog->say()
+```
+
+支持继承,继承最多两个吧，就像人继承自父母，实现接口支持一个
+```
+class ChinaDog extends Dog implement Intf
+{
+  from: "china"
+}
+```
+
+```
+interface Intf {
+  say: fn() {}
+  hello: fn() {}
+}
+```
