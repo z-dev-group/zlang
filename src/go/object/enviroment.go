@@ -32,15 +32,17 @@ func (e *Environment) Get(name string, packageName string) (Object, bool) {
 
 func (e *Environment) IsFormOuter(name string, packageName string) bool {
 	isFromOuter := false
-	_, ok := e.store[name]
-	if !ok && packageName != "" {
-		varName := packageName + "." + name
-		_, ok = e.store[varName]
+	queryName := name
+	if packageName != "" {
+		queryName = packageName + "." + name
 	}
+	_, ok := e.store[queryName]
 	if !ok && e.outer != nil {
 		_, ok = e.outer.Get(name, packageName)
 		if ok {
 			isFromOuter = true
+		} else {
+			return e.outer.IsFormOuter(name, packageName)
 		}
 	}
 	return isFromOuter
@@ -58,10 +60,16 @@ func (e *Environment) OuterSet(name string, val Object, packageName string) Obje
 	if e.outer == nil {
 		return newError("outer is not exists")
 	}
+	queryName := name
 	if packageName != "" {
-		name = packageName + "." + name
+		queryName = packageName + "." + name
 	}
-	e.outer.store[name] = val
+	_, ok := e.outer.store[queryName]
+	if ok {
+		e.outer.store[queryName] = val
+	} else {
+		return e.outer.OuterSet(name, val, packageName)
+	}
 	return val
 }
 

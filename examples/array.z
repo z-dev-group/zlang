@@ -7,9 +7,10 @@ while (index < len(names)) {
   index = index + 1
 }
 
-var_dump(join(names, "','"))
+var_dump(array.join(names, "','"))
 
 let ages = [1, 2, 3, 4]
 var_dump(ages)
 var_dump(ages[1 + 1])
 ages[1 + 1]
+var_dump(array.index(names, "tony"))
