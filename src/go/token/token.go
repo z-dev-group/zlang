@@ -27,6 +27,13 @@ const (
 	PACKAGE  = "PACKAGE"
 	FOR      = "FOR"
 
+	// oop keyword
+	CLASS     = "CLASS"
+	NEW       = "NEW"
+	EXTENDS   = "EXTENDS"
+	IMPLEMENT = "IMPLEMENT"
+	INTERFACE = "INTERFACE"
+
 	ASSIGN   = "="
 	PLUS     = "+"
 	MINUS    = "-"
@@ -65,18 +72,23 @@ type Token struct {
 }
 
 var keywords = map[string]TokenType{
-	"fn":      FUNCTION,
-	"let":     LET,
-	"true":    TRUE,
-	"false":   FALSE,
-	"if":      IF,
-	"else":    ELSE,
-	"return":  RETURN,
-	"import":  IMPORT,
-	"while":   WHILE,
-	"package": PACKAGE,
-	"break":   BREAK,
-	"for":     FOR,
+	"fn":        FUNCTION,
+	"let":       LET,
+	"true":      TRUE,
+	"false":     FALSE,
+	"if":        IF,
+	"else":      ELSE,
+	"return":    RETURN,
+	"import":    IMPORT,
+	"while":     WHILE,
+	"package":   PACKAGE,
+	"break":     BREAK,
+	"for":       FOR,
+	"class":     CLASS,
+	"new":       NEW,
+	"extends":   EXTENDS,
+	"implement": IMPLEMENT,
+	"interface": INTERFACE,
 }
 
 func LookIndent(indent string) TokenType {

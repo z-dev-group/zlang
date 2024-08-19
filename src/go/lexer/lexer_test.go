@@ -51,6 +51,11 @@ i++
 i--
 break
 for
+class
+new
+extends
+implement
+interface
 `
 
 	tests := []struct {
@@ -209,6 +214,16 @@ for
 		{token.BREAK, "break"},
 		{token.SEMICOLON, ";"},
 		{token.FOR, "for"},
+		{token.SEMICOLON, ";"},
+		{token.CLASS, "class"},
+		{token.SEMICOLON, ";"},
+		{token.NEW, "new"},
+		{token.SEMICOLON, ";"},
+		{token.EXTENDS, "extends"},
+		{token.SEMICOLON, ";"},
+		{token.IMPLEMENT, "implement"},
+		{token.SEMICOLON, ";"},
+		{token.INTERFACE, "interface"},
 		{token.SEMICOLON, ";"},
 		{token.EOF, ""},
 	}

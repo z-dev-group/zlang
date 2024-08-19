@@ -68,6 +68,125 @@ func TestForStatement(t *testing.T) {
 		},
 	}
 	if program.String() != "for(let i = 0;;(i < 10);(i ++ 1)){}" {
-		t.Errorf("program.String() wrong. got=%q", program.String())
+		t.Errorf("program.String() wrong. got=%s", program.String())
+	}
+}
+
+func TestInterfaceExpression(t *testing.T) {
+	program := Program{
+		Statements: []Statement{
+			&ExpressionStatement{
+				Expression: &InterfaceExpress{
+					Token: token.Token{Literal: "interface"},
+					Name: Identifier{
+						Token: token.Token{Literal: "intf"},
+						Value: "intf",
+					},
+					Functions: []FunctionLiteral{
+						{
+							Token:      token.Token{Literal: "fn"},
+							Name:       "hello",
+							Body:       &BlockStatement{},
+							Parameters: []*Identifier{},
+						},
+					},
+				},
+			},
+		},
+	}
+	if program.String() != "interface intf{fn hello() {} }" {
+		t.Errorf("program.String() wrong. got=%s", program.String())
+	}
+}
+
+func TestClassExpression(t *testing.T) {
+	program := Program{
+		Statements: []Statement{
+			&ExpressionStatement{
+				Expression: &ClassExpress{
+					Token: token.Token{Literal: "class", Type: token.CLASS},
+					Name: Identifier{
+						Token: token.Token{Literal: "Person", Type: token.IDENT},
+						Value: "Person",
+					},
+					Parents: []ClassExpress{
+						{
+							Token: token.Token{Literal: "class", Type: token.CLASS},
+							Name: Identifier{
+								Token: token.Token{Literal: "TwoLegs", Type: token.IDENT},
+								Value: "TwoLegs",
+							},
+						},
+						{
+							Token: token.Token{Literal: "class", Type: token.CLASS},
+							Name: Identifier{
+								Token: token.Token{Literal: "Animal", Type: token.IDENT},
+								Value: "Animal",
+							},
+						},
+					},
+					LetStatements: []LetStatement{
+						{
+							Token: token.Token{Type: token.LET, Literal: "let"},
+							Name: &Identifier{
+								Token: token.Token{Literal: "name", Type: token.IDENT},
+								Value: "name",
+							},
+							Value: &StringLiteral{
+								Token: token.Token{Literal: "seven"},
+								Value: "seven",
+							},
+						},
+						{
+							Token: token.Token{Literal: "let", Type: token.LET},
+							Name: &Identifier{
+								Token: token.Token{Literal: "age", Type: token.IDENT},
+								Value: "age",
+							},
+							Value: &IntegerLiteral{
+								Token: token.Token{Literal: "12"},
+								Value: 12,
+							},
+						},
+					},
+					Functions: []FunctionLiteral{
+						{
+							Token: token.Token{Literal: "fn"},
+							Name:  "work",
+							Body:  &BlockStatement{},
+							Parameters: []*Identifier{
+								{
+									Token: token.Token{Literal: "hours"},
+									Value: "hours",
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+	}
+	if program.String() != "class Person extends TwoLegs,Animal {let name = seven;let age = 12;fn work(hours) {} }" {
+		t.Fatalf("program.String() wrong. got=%s", program.String())
+	}
+}
+
+func TestObjectExpress(t *testing.T) {
+	program := Program{
+		Statements: []Statement{
+			&ExpressionStatement{
+				Expression: &ObjectExpress{
+					Token: token.Token{Literal: "new", Type: token.NEW},
+					Class: ClassExpress{
+						Name: Identifier{
+							Token: token.Token{Literal: "Hello"},
+						},
+					},
+				},
+			},
+		},
+	}
+	if program.String() != "new Hello()" {
+		t.Fatalf("program.String() wrong. got=%s", program.String())
 	}
 }

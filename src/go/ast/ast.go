@@ -208,9 +208,11 @@ func (bs *BlockStatement) expressionNode()      {}
 func (bs *BlockStatement) TokenLiteral() string { return bs.Token.Literal }
 func (bs *BlockStatement) String() string {
 	var out bytes.Buffer
+	out.WriteString("{")
 	for _, s := range bs.Statements {
 		out.WriteString(s.String())
 	}
+	out.WriteString("}")
 	return out.String()
 }
 
@@ -233,6 +235,7 @@ func (fl *FunctionLiteral) String() string {
 	}
 	out.WriteString(fl.TokenLiteral())
 	if fl.Name != "" {
+		out.WriteString(" ")
 		out.WriteString(fl.Name)
 	}
 	out.WriteString("(")
@@ -432,5 +435,90 @@ func (fe *ForExpression) String() string {
 	out.WriteString(")")
 	out.WriteString("{")
 	out.WriteString("}")
+	return out.String()
+}
+
+type ClassExpress struct {
+	Token         token.Token
+	Name          Identifier
+	Parents       []ClassExpress
+	Interface     *InterfaceExpress
+	LetStatements []LetStatement
+	Functions     []FunctionLiteral
+}
+
+func (ce *ClassExpress) expressionNode() {}
+func (ce *ClassExpress) TokenLiteral() string {
+	return ce.Token.Literal
+}
+func (ce *ClassExpress) String() string {
+	var out bytes.Buffer
+	out.WriteString("class")
+	out.WriteString(" ")
+	out.WriteString(ce.Name.Value)
+	if ce.Parents != nil {
+		out.WriteString(" extends ")
+		for index, parent := range ce.Parents {
+			out.WriteString(parent.Name.Value)
+			if index != len(ce.Parents)-1 {
+				out.WriteString(",")
+			}
+		}
+	}
+	if ce.Interface != nil {
+		out.WriteString(" implement ")
+		out.WriteString(ce.Interface.String())
+	}
+
+	out.WriteString(" {")
+	for _, letStatement := range ce.LetStatements {
+		out.WriteString(letStatement.String())
+	}
+	for _, function := range ce.Functions {
+		out.WriteString(function.String())
+	}
+	out.WriteString(" }")
+	return out.String()
+}
+
+type ObjectExpress struct {
+	Token token.Token
+	Class ClassExpress
+}
+
+func (oe *ObjectExpress) expressionNode() {}
+func (oe *ObjectExpress) TokenLiteral() string {
+	return oe.Token.Literal
+}
+func (oe *ObjectExpress) String() string {
+	var out bytes.Buffer
+	out.WriteString("new")
+	out.WriteString(" ")
+	out.WriteString(oe.Class.Name.TokenLiteral())
+	out.WriteString("()")
+	out.WriteString("")
+	return out.String()
+}
+
+type InterfaceExpress struct {
+	Token     token.Token
+	Name      Identifier
+	Functions []FunctionLiteral
+}
+
+func (ie *InterfaceExpress) expressionNode() {}
+func (ie *InterfaceExpress) TokenLiteral() string {
+	return ie.Token.Literal
+}
+func (ie *InterfaceExpress) String() string {
+	var out bytes.Buffer
+	out.WriteString(ie.Token.Literal)
+	out.WriteString(" ")
+	out.WriteString(ie.Name.Value)
+	out.WriteString("{")
+	for _, function := range ie.Functions {
+		out.WriteString(function.String())
+	}
+	out.WriteString(" }")
 	return out.String()
 }
