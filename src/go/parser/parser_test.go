@@ -1065,3 +1065,29 @@ func TestInterfaceExtendsStatement(t *testing.T) {
 		t.Fatalf("interface parents len error, expected 1, got=%d", len(interfaceExpress.Parents))
 	}
 }
+
+func TestObjectStatement(t *testing.T) {
+	input := "new Hello()"
+	l := lexer.New(input)
+	p := New(l)
+	program := p.ParseProgram()
+
+	if len(p.errors) > 0 {
+		t.Fatalf("%v", p.errors)
+	}
+
+	if len(program.Statements) != 1 {
+		t.Fatalf("expected program.Statements len is 1, got=%d", len(program.Statements))
+	}
+	stms, ok := program.Statements[0].(*ast.ExpressionStatement)
+	if !ok {
+		t.Fatalf("program.Statement[0] is not ast.ExpressionStatement, got=%v", program.Statements[0])
+	}
+	objectExpress, ok := stms.Expression.(*ast.ObjectExpress)
+	if !ok {
+		t.Fatalf("ExpresstionStatement Expression is not ast.ObjectExpress, got=%v", stms.Expression)
+	}
+	if objectExpress.Class.Value != "Hello" {
+		t.Fatalf("class Name error, expected Hello, got=%s", objectExpress.Class.Value)
+	}
+}

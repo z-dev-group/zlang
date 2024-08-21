@@ -483,7 +483,7 @@ func (ce *ClassExpress) String() string {
 
 type ObjectExpress struct {
 	Token token.Token
-	Class ClassExpress
+	Class *Identifier
 }
 
 func (oe *ObjectExpress) expressionNode() {}
@@ -494,7 +494,7 @@ func (oe *ObjectExpress) String() string {
 	var out bytes.Buffer
 	out.WriteString("new")
 	out.WriteString(" ")
-	out.WriteString(oe.Class.Name.TokenLiteral())
+	out.WriteString(oe.Class.TokenLiteral())
 	out.WriteString("()")
 	out.WriteString("")
 	return out.String()

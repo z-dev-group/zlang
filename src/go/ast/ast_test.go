@@ -171,10 +171,8 @@ func TestObjectExpress(t *testing.T) {
 			&ExpressionStatement{
 				Expression: &ObjectExpress{
 					Token: token.Token{Literal: "new", Type: token.NEW},
-					Class: ClassExpress{
-						Name: &Identifier{
-							Token: token.Token{Literal: "Hello"},
-						},
+					Class: &Identifier{
+						Token: token.Token{Literal: "Hello"},
 					},
 				},
 			},

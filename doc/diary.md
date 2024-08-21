@@ -126,4 +126,4 @@ interface Intf {
 
 
 ### 2024-08-22
-这两天晚上陆陆续续做了 类class，接口interface的语法树的解析
+这两天晚上陆陆续续做了 类class，接口interface，对象new的语法树的解析

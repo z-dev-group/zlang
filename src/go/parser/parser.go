@@ -118,6 +118,7 @@ func New(l *lexer.Lexer) *Parser {
 	p.registerPrefix(token.FOR, p.parseForExpression)
 	p.registerPrefix(token.CLASS, p.parseClassExpression)
 	p.registerPrefix(token.INTERFACE, p.parseInterfaceExpress)
+	p.registerPrefix(token.NEW, p.parseNewExpression)
 	return p
 }
 
@@ -705,4 +706,18 @@ func (p *Parser) parseInterfaceExpress() ast.Expression {
 	}
 	p.expectPeek(token.RBRACE)
 	return interfaceExpress
+}
+
+func (p *Parser) parseNewExpression() ast.Expression {
+	newExpression := &ast.ObjectExpress{
+		Token: p.curToken,
+	}
+	p.expectPeek(token.IDENT)
+	newExpression.Class = &ast.Identifier{
+		Token: p.curToken,
+		Value: p.curToken.Literal,
+	}
+	p.expectPeek(token.LPAREN)
+	p.expectPeek(token.RPAREN)
+	return newExpression
 }
