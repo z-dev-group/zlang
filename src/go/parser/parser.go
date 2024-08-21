@@ -127,11 +127,6 @@ func (p *Parser) nextToken() {
 	p.tokenCount = p.tokenCount + 1
 }
 
-func (p *Parser) doubleNextToken() {
-	p.nextToken()
-	p.nextToken()
-}
-
 func (p *Parser) Errors() []string {
 	return p.errors
 }
@@ -625,7 +620,7 @@ func (p *Parser) parseClassExpression() ast.Expression {
 	classExpression := &ast.ClassExpress{
 		Token: p.curToken,
 	}
-	p.nextToken()
+	p.expectPeek(token.IDENT)
 	classExpression.Name = &ast.Identifier{
 		Token:       p.curToken,
 		Value:       p.curToken.Literal,
@@ -635,16 +630,19 @@ func (p *Parser) parseClassExpression() ast.Expression {
 
 	if !p.peekTokenIs(token.LBRACE) {
 		if p.peekTokenIs(token.EXTENDS) {
-			p.doubleNextToken()
+			p.nextToken()
+			p.expectPeek(token.IDENT)
 			classExpression.Parents = []*ast.Identifier{}
 			classExpression.Parents = append(classExpression.Parents, &ast.Identifier{Token: p.curToken, Value: p.curToken.Literal})
 			if p.peekTokenIs(token.COMMA) {
-				p.doubleNextToken()
+				p.nextToken()
+				p.expectPeek(token.IDENT)
 				classExpression.Parents = append(classExpression.Parents, &ast.Identifier{Token: p.curToken, Value: p.curToken.Literal})
 			}
 		}
 		if p.peekTokenIs(token.IMPLEMENT) {
-			p.doubleNextToken()
+			p.nextToken()
+			p.expectPeek(token.IDENT)
 			classExpression.Interface = &ast.Identifier{Token: p.curToken, Value: p.curToken.Literal}
 		}
 	}
@@ -667,7 +665,7 @@ func (p *Parser) parseClassExpression() ast.Expression {
 		}
 		classExpression.Functions = functionStatemens
 	}
-	p.nextToken()
+	p.expectPeek(token.RBRACE)
 	return classExpression
 }
 
@@ -675,7 +673,7 @@ func (p *Parser) parseInterfaceExpress() ast.Expression {
 	interfaceExpress := &ast.InterfaceExpress{
 		Token: p.curToken,
 	}
-	p.nextToken()
+	p.expectPeek(token.IDENT)
 	interfaceExpress.Name = ast.Identifier{
 		Token:       p.curToken,
 		Value:       p.curToken.Literal,
@@ -684,11 +682,13 @@ func (p *Parser) parseInterfaceExpress() ast.Expression {
 	}
 
 	if p.peekTokenIs(token.EXTENDS) {
-		p.doubleNextToken()
+		p.nextToken()
+		p.expectPeek(token.IDENT)
 		interfaceExpress.Parents = []*ast.Identifier{}
 		interfaceExpress.Parents = append(interfaceExpress.Parents, &ast.Identifier{Token: p.curToken, Value: p.curToken.Literal})
 		if p.peekTokenIs(token.COMMA) {
-			p.doubleNextToken()
+			p.nextToken()
+			p.expectPeek(token.IDENT)
 			interfaceExpress.Parents = append(interfaceExpress.Parents, &ast.Identifier{Token: p.curToken, Value: p.curToken.Literal})
 		}
 	}
@@ -703,6 +703,6 @@ func (p *Parser) parseInterfaceExpress() ast.Expression {
 		}
 		interfaceExpress.Functions = functionStatemens
 	}
-	p.nextToken()
+	p.expectPeek(token.RBRACE)
 	return interfaceExpress
 }

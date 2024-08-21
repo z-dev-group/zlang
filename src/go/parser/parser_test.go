@@ -1022,14 +1022,46 @@ func TestInterfaceStatement(t *testing.T) {
 	if !ok {
 		t.Fatalf("program.Statement[0] is not ast.ExpressionStatement, got=%v", program.Statements[0])
 	}
-	classExpress, ok := stms.Expression.(*ast.InterfaceExpress)
+	interfaceExpress, ok := stms.Expression.(*ast.InterfaceExpress)
 	if !ok {
 		t.Fatalf("ExpresstionStatemen Expression is not ast.ClassExpression, got=%v", stms.Expression)
 	}
-	if classExpress.Name.Value != "Hello" {
-		t.Fatalf("class Name error, expected Hello, got=%s", classExpress.Name.Value)
+	if interfaceExpress.Name.Value != "Hello" {
+		t.Fatalf("class Name error, expected Hello, got=%s", interfaceExpress.Name.Value)
 	}
-	if len(classExpress.Functions) != 1 {
-		t.Fatalf("function num error ,expected 1, got=%d", len(classExpress.Functions))
+	if len(interfaceExpress.Functions) != 1 {
+		t.Fatalf("function num error ,expected 1, got=%d", len(interfaceExpress.Functions))
+	}
+}
+
+func TestInterfaceExtendsStatement(t *testing.T) {
+	input := "interface Hello extends World{fn say(){}}"
+	l := lexer.New(input)
+	p := New(l)
+	program := p.ParseProgram()
+
+	if len(p.errors) > 0 {
+		t.Fatalf("%v", p.errors)
+	}
+
+	if len(program.Statements) != 1 {
+		t.Fatalf("expected program.Statements len is 1, got=%d", len(program.Statements))
+	}
+	stms, ok := program.Statements[0].(*ast.ExpressionStatement)
+	if !ok {
+		t.Fatalf("program.Statement[0] is not ast.ExpressionStatement, got=%v", program.Statements[0])
+	}
+	interfaceExpress, ok := stms.Expression.(*ast.InterfaceExpress)
+	if !ok {
+		t.Fatalf("ExpresstionStatemen Expression is not ast.ClassExpression, got=%v", stms.Expression)
+	}
+	if interfaceExpress.Name.Value != "Hello" {
+		t.Fatalf("class Name error, expected Hello, got=%s", interfaceExpress.Name.Value)
+	}
+	if len(interfaceExpress.Functions) != 1 {
+		t.Fatalf("function num error ,expected 1, got=%d", len(interfaceExpress.Functions))
+	}
+	if len(interfaceExpress.Parents) != 1 {
+		t.Fatalf("interface parents len error, expected 1, got=%d", len(interfaceExpress.Parents))
 	}
 }
