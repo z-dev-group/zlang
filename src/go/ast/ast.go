@@ -440,11 +440,11 @@ func (fe *ForExpression) String() string {
 
 type ClassExpress struct {
 	Token         token.Token
-	Name          Identifier
-	Parents       []ClassExpress
-	Interface     *InterfaceExpress
-	LetStatements []LetStatement
-	Functions     []FunctionLiteral
+	Name          *Identifier
+	Parents       []*Identifier
+	Interface     *Identifier
+	LetStatements []*LetStatement
+	Functions     []*FunctionLiteral
 }
 
 func (ce *ClassExpress) expressionNode() {}
@@ -459,7 +459,7 @@ func (ce *ClassExpress) String() string {
 	if ce.Parents != nil {
 		out.WriteString(" extends ")
 		for index, parent := range ce.Parents {
-			out.WriteString(parent.Name.Value)
+			out.WriteString(parent.Value)
 			if index != len(ce.Parents)-1 {
 				out.WriteString(",")
 			}
@@ -503,7 +503,8 @@ func (oe *ObjectExpress) String() string {
 type InterfaceExpress struct {
 	Token     token.Token
 	Name      Identifier
-	Functions []FunctionLiteral
+	Parents   []*Identifier
+	Functions []*FunctionLiteral
 }
 
 func (ie *InterfaceExpress) expressionNode() {}
@@ -515,6 +516,17 @@ func (ie *InterfaceExpress) String() string {
 	out.WriteString(ie.Token.Literal)
 	out.WriteString(" ")
 	out.WriteString(ie.Name.Value)
+	if ie.Parents != nil {
+		out.WriteString(" ")
+		out.WriteString("extends")
+		out.WriteString(" ")
+		for i, parent := range ie.Parents {
+			out.WriteString(parent.TokenLiteral())
+			if i < len(ie.Parents) {
+				out.WriteString(",")
+			}
+		}
+	}
 	out.WriteString("{")
 	for _, function := range ie.Functions {
 		out.WriteString(function.String())

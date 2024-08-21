@@ -897,12 +897,139 @@ func TestForStatement(t *testing.T) {
 	program := p.ParseProgram()
 
 	if len(p.errors) > 0 {
-		fmt.Println(p.errors)
+		t.Fatalf("%v", p.errors)
 	}
 
 	if len(program.Statements) != 1 {
-		fmt.Println(program.Statements)
 		t.Fatalf("expected program.Statements len is 1, got=%d", len(program.Statements))
-		fmt.Println(program.Statements)
+		t.Fatalf("%v", program.Statements)
+	}
+}
+
+func TestBaseClassStatement(t *testing.T) {
+	input := "class Hello{}"
+	l := lexer.New(input)
+	p := New(l)
+	program := p.ParseProgram()
+
+	if len(p.errors) > 0 {
+		t.Fatalf("%v", p.errors)
+	}
+
+	if len(program.Statements) != 1 {
+		t.Fatalf("expected program.Statements len is 1, got=%d", len(program.Statements))
+	}
+	stms, ok := program.Statements[0].(*ast.ExpressionStatement)
+	if !ok {
+		t.Fatalf("program.Statement[0] is not ast.ExpressionStatement, got=%v", program.Statements[0])
+	}
+	classExpress, ok := stms.Expression.(*ast.ClassExpress)
+	if !ok {
+		t.Fatalf("ExpresstionStatemen Expression is not ast.ClassExpression, got=%v", stms.Expression)
+	}
+	if classExpress.Name.Value != "Hello" {
+		t.Fatalf("class Name error, expected Hello, got=%s", classExpress.Name.Value)
+	}
+}
+
+func TestExtendsClassStatement(t *testing.T) {
+	input := `class Person extends Animal, TwoLeg implement Singer { let name = "sevenpan"; let age = 12; fn say(){}}`
+	l := lexer.New(input)
+	p := New(l)
+	program := p.ParseProgram()
+	if len(p.errors) > 0 {
+		t.Fatalf("expected errors num is 0, got=%d, error is: %v", len(p.errors), p.errors)
+	}
+	if len(program.Statements) != 1 {
+		t.Fatalf("expected program.Statements len is 1, got=%d", len(program.Statements))
+	}
+	stms, ok := program.Statements[0].(*ast.ExpressionStatement)
+	if !ok {
+		t.Fatalf("program.Statement[0] is not ast.ExpressionStatement, got=%v", program.Statements[0])
+	}
+	classExpress, ok := stms.Expression.(*ast.ClassExpress)
+	if !ok {
+		t.Fatalf("ExpresstionStatemen Expression is not ast.ClassExpression, got=%v", stms.Expression)
+	}
+	if classExpress.Name.Value != "Person" {
+		t.Fatalf("class Name error, expected Person, got=%s", classExpress.Name.Value)
+	}
+	if classExpress.Parents[0].Value != "Animal" {
+		t.Fatalf("class parent[0] is error, expected Animal, got=%s", classExpress.Parents[0].Value)
+	}
+	if classExpress.Parents[1].Value != "TwoLeg" {
+		t.Fatalf("class parent[1] is error, expected TwoLeg, got=%s", classExpress.Parents[1].Value)
+	}
+
+	if len(classExpress.LetStatements) != 2 {
+		t.Fatalf("class Letstatements len is not 2, got=%d", len(classExpress.LetStatements))
+	}
+
+	if len(classExpress.Functions) != 1 {
+		t.Fatalf("class Letstatements len is not 1, got=%d", len(classExpress.Functions))
+	}
+}
+
+func TestImplementClassStatement(t *testing.T) {
+	input := `class Person implement Singer { let name = "sevenpan"; let age = 12; fn say(){}}`
+	l := lexer.New(input)
+	p := New(l)
+	program := p.ParseProgram()
+	if len(p.errors) > 0 {
+		t.Fatalf("expected errors num is 0, got=%d, error is: %v", len(p.errors), p.errors)
+	}
+	if len(program.Statements) != 1 {
+		t.Fatalf("expected program.Statements len is 1, got=%d", len(program.Statements))
+	}
+	stms, ok := program.Statements[0].(*ast.ExpressionStatement)
+	if !ok {
+		t.Fatalf("program.Statement[0] is not ast.ExpressionStatement, got=%v", program.Statements[0])
+	}
+	classExpress, ok := stms.Expression.(*ast.ClassExpress)
+	if !ok {
+		t.Fatalf("ExpresstionStatemen Expression is not ast.ClassExpression, got=%v", stms.Expression)
+	}
+	if classExpress.Name.Value != "Person" {
+		t.Fatalf("class Name error, expected Person, got=%s", classExpress.Name.Value)
+	}
+
+	if len(classExpress.LetStatements) != 2 {
+		t.Fatalf("class Letstatements len is not 2, got=%d", len(classExpress.LetStatements))
+	}
+
+	if len(classExpress.Functions) != 1 {
+		t.Fatalf("class Letstatements len is not 1, got=%d", len(classExpress.Functions))
+	}
+
+	if classExpress.Interface.Value != "Singer" {
+		t.Fatalf("interface name error, expected Singer, got=%s", classExpress.Interface.Value)
+	}
+}
+func TestInterfaceStatement(t *testing.T) {
+	input := "interface Hello{fn say(){}}"
+	l := lexer.New(input)
+	p := New(l)
+	program := p.ParseProgram()
+
+	if len(p.errors) > 0 {
+		t.Fatalf("%v", p.errors)
+	}
+
+	if len(program.Statements) != 1 {
+		t.Fatalf("expected program.Statements len is 1, got=%d", len(program.Statements))
+	}
+	stms, ok := program.Statements[0].(*ast.ExpressionStatement)
+	if !ok {
+		t.Fatalf("program.Statement[0] is not ast.ExpressionStatement, got=%v", program.Statements[0])
+	}
+	classExpress, ok := stms.Expression.(*ast.InterfaceExpress)
+	if !ok {
+		t.Fatalf("ExpresstionStatemen Expression is not ast.ClassExpression, got=%v", stms.Expression)
+	}
+	if classExpress.Name.Value != "Hello" {
+		t.Fatalf("class Name error, expected Hello, got=%s", classExpress.Name.Value)
+	}
+	if len(classExpress.Functions) != 1 {
+		t.Fatalf("function num error ,expected 1, got=%d", len(classExpress.Functions))
 	}
 }

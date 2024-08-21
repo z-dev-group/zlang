@@ -44,6 +44,7 @@ var precedences = map[token.TokenType]int{
 	token.PLUSPLUS:       LESSGRATER,
 	token.MINUSMINUS:     LESSGRATER,
 	token.ASSIGN:         LESSGRATER,
+	token.CLASS:          LESSGRATER,
 	token.PLUS:           SUM,
 	token.MINUS:          SUM,
 	token.SLASH:          PRODUCT,
@@ -115,6 +116,8 @@ func New(l *lexer.Lexer) *Parser {
 	p.registerInfix(token.ASSIGN, p.parseInfixExpression)
 	p.registerPrefix(token.BREAK, p.parseBreakExpression)
 	p.registerPrefix(token.FOR, p.parseForExpression)
+	p.registerPrefix(token.CLASS, p.parseClassExpression)
+	p.registerPrefix(token.INTERFACE, p.parseInterfaceExpress)
 	return p
 }
 
@@ -122,6 +125,11 @@ func (p *Parser) nextToken() {
 	p.curToken = p.peekToken
 	p.peekToken = p.l.NextToken()
 	p.tokenCount = p.tokenCount + 1
+}
+
+func (p *Parser) doubleNextToken() {
+	p.nextToken()
+	p.nextToken()
 }
 
 func (p *Parser) Errors() []string {
@@ -611,4 +619,90 @@ func (p *Parser) parseForExpression() ast.Expression {
 	}
 	forExpression.Body = p.parseBlockStatement()
 	return forExpression
+}
+
+func (p *Parser) parseClassExpression() ast.Expression {
+	classExpression := &ast.ClassExpress{
+		Token: p.curToken,
+	}
+	p.nextToken()
+	classExpression.Name = &ast.Identifier{
+		Token:       p.curToken,
+		Value:       p.curToken.Literal,
+		PackageName: p.l.PackageName,
+		FileName:    p.l.FileName,
+	}
+
+	if !p.peekTokenIs(token.LBRACE) {
+		if p.peekTokenIs(token.EXTENDS) {
+			p.doubleNextToken()
+			classExpression.Parents = []*ast.Identifier{}
+			classExpression.Parents = append(classExpression.Parents, &ast.Identifier{Token: p.curToken, Value: p.curToken.Literal})
+			if p.peekTokenIs(token.COMMA) {
+				p.doubleNextToken()
+				classExpression.Parents = append(classExpression.Parents, &ast.Identifier{Token: p.curToken, Value: p.curToken.Literal})
+			}
+		}
+		if p.peekTokenIs(token.IMPLEMENT) {
+			p.doubleNextToken()
+			classExpression.Interface = &ast.Identifier{Token: p.curToken, Value: p.curToken.Literal}
+		}
+	}
+	p.nextToken()
+
+	if !p.peekTokenIs(token.RBRACE) {
+		letStatements := []*ast.LetStatement{}
+		for p.peekTokenIs(token.LET) {
+			p.nextToken()
+			letStatement := p.parseLetStatement().(*ast.LetStatement)
+			letStatements = append(letStatements, letStatement)
+		}
+		classExpression.LetStatements = letStatements
+
+		functionStatemens := []*ast.FunctionLiteral{}
+		for p.peekTokenIs(token.FUNCTION) {
+			p.nextToken()
+			functionStatement := p.parseFunctionLiteral().(*ast.FunctionLiteral)
+			functionStatemens = append(functionStatemens, functionStatement)
+		}
+		classExpression.Functions = functionStatemens
+	}
+	p.nextToken()
+	return classExpression
+}
+
+func (p *Parser) parseInterfaceExpress() ast.Expression {
+	interfaceExpress := &ast.InterfaceExpress{
+		Token: p.curToken,
+	}
+	p.nextToken()
+	interfaceExpress.Name = ast.Identifier{
+		Token:       p.curToken,
+		Value:       p.curToken.Literal,
+		FileName:    p.l.FileName,
+		PackageName: p.l.PackageName,
+	}
+
+	if p.peekTokenIs(token.EXTENDS) {
+		p.doubleNextToken()
+		interfaceExpress.Parents = []*ast.Identifier{}
+		interfaceExpress.Parents = append(interfaceExpress.Parents, &ast.Identifier{Token: p.curToken, Value: p.curToken.Literal})
+		if p.peekTokenIs(token.COMMA) {
+			p.doubleNextToken()
+			interfaceExpress.Parents = append(interfaceExpress.Parents, &ast.Identifier{Token: p.curToken, Value: p.curToken.Literal})
+		}
+	}
+	p.nextToken()
+
+	if !p.peekTokenIs(token.RBRACE) {
+		functionStatemens := []*ast.FunctionLiteral{}
+		for p.peekTokenIs(token.FUNCTION) {
+			p.nextToken()
+			functionStatement := p.parseFunctionLiteral().(*ast.FunctionLiteral)
+			functionStatemens = append(functionStatemens, functionStatement)
+		}
+		interfaceExpress.Functions = functionStatemens
+	}
+	p.nextToken()
+	return interfaceExpress
 }

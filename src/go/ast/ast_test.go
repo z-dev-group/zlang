@@ -82,7 +82,7 @@ func TestInterfaceExpression(t *testing.T) {
 						Token: token.Token{Literal: "intf"},
 						Value: "intf",
 					},
-					Functions: []FunctionLiteral{
+					Functions: []*FunctionLiteral{
 						{
 							Token:      token.Token{Literal: "fn"},
 							Name:       "hello",
@@ -105,27 +105,21 @@ func TestClassExpression(t *testing.T) {
 			&ExpressionStatement{
 				Expression: &ClassExpress{
 					Token: token.Token{Literal: "class", Type: token.CLASS},
-					Name: Identifier{
+					Name: &Identifier{
 						Token: token.Token{Literal: "Person", Type: token.IDENT},
 						Value: "Person",
 					},
-					Parents: []ClassExpress{
+					Parents: []*Identifier{
 						{
-							Token: token.Token{Literal: "class", Type: token.CLASS},
-							Name: Identifier{
-								Token: token.Token{Literal: "TwoLegs", Type: token.IDENT},
-								Value: "TwoLegs",
-							},
+							Token: token.Token{Literal: "TwoLegs", Type: token.CLASS},
+							Value: "TwoLegs",
 						},
 						{
-							Token: token.Token{Literal: "class", Type: token.CLASS},
-							Name: Identifier{
-								Token: token.Token{Literal: "Animal", Type: token.IDENT},
-								Value: "Animal",
-							},
+							Token: token.Token{Literal: "Animal", Type: token.CLASS},
+							Value: "Animal",
 						},
 					},
-					LetStatements: []LetStatement{
+					LetStatements: []*LetStatement{
 						{
 							Token: token.Token{Type: token.LET, Literal: "let"},
 							Name: &Identifier{
@@ -149,7 +143,7 @@ func TestClassExpression(t *testing.T) {
 							},
 						},
 					},
-					Functions: []FunctionLiteral{
+					Functions: []*FunctionLiteral{
 						{
 							Token: token.Token{Literal: "fn"},
 							Name:  "work",
@@ -178,7 +172,7 @@ func TestObjectExpress(t *testing.T) {
 				Expression: &ObjectExpress{
 					Token: token.Token{Literal: "new", Type: token.NEW},
 					Class: ClassExpress{
-						Name: Identifier{
+						Name: &Identifier{
 							Token: token.Token{Literal: "Hello"},
 						},
 					},
