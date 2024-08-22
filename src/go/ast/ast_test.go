@@ -168,17 +168,36 @@ func TestClassExpression(t *testing.T) {
 func TestObjectExpress(t *testing.T) {
 	program := Program{
 		Statements: []Statement{
-			&ExpressionStatement{
-				Expression: &ObjectExpress{
+			&LetStatement{
+				Token: token.Token{Literal: "let", Type: token.LET},
+				Name: &Identifier{
+					Token: token.Token{Literal: "h"},
+					Value: "h",
+				},
+				Value: &ObjectExpress{
 					Token: token.Token{Literal: "new", Type: token.NEW},
 					Class: &Identifier{
 						Token: token.Token{Literal: "Hello"},
 					},
 				},
 			},
+			&ExpressionStatement{
+				Expression: &InfixExpression{
+					Token: token.Token{Literal: "->", Type: token.OBJET_GET},
+					Left: &Identifier{
+						Token: token.Token{Literal: "a"},
+						Value: "a",
+					},
+					Operator: "->",
+					Right: &Identifier{
+						Token: token.Token{Literal: "age"},
+						Value: "age",
+					},
+				},
+			},
 		},
 	}
-	if program.String() != "new Hello()" {
+	if program.String() != "let h = new Hello();(a -> age)" {
 		t.Fatalf("program.String() wrong. got=%s", program.String())
 	}
 }

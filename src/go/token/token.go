@@ -33,6 +33,8 @@ const (
 	EXTENDS   = "EXTENDS"
 	IMPLEMENT = "IMPLEMENT"
 	INTERFACE = "INTERFACE"
+	// oop object install value access
+	OBJET_GET = "->"
 
 	ASSIGN   = "="
 	PLUS     = "+"

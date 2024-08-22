@@ -1091,3 +1091,47 @@ func TestObjectStatement(t *testing.T) {
 		t.Fatalf("class Name error, expected Hello, got=%s", objectExpress.Class.Value)
 	}
 }
+
+func TestObjectValueStatement(t *testing.T) {
+	input := "let h = new Hello(); h->age"
+	l := lexer.New(input)
+	p := New(l)
+	program := p.ParseProgram()
+
+	if len(p.errors) > 0 {
+		t.Fatalf("%v", p.errors)
+	}
+
+	if len(program.Statements) != 2 {
+		t.Fatalf("expected program.Statements len is 1, got=%d", len(program.Statements))
+	}
+	stms, ok := program.Statements[0].(*ast.LetStatement)
+	if !ok {
+		t.Fatalf("program.Statement[0] is not ast.LetStatement, got=%v", program.Statements[0])
+	}
+	objectExpress, ok := stms.Value.(*ast.ObjectExpress)
+	if !ok {
+		t.Fatalf("ExpresstionStatement Expression is not ast.ObjectExpress, got=%v", stms.Value)
+	}
+	if objectExpress.Class.Value != "Hello" {
+		t.Fatalf("class Name error, expected Hello, got=%s", objectExpress.Class.Value)
+	}
+
+	objectGetExpression, ok := program.Statements[1].(*ast.ExpressionStatement)
+	if !ok {
+		t.Fatalf("program.Statements[1]. is not ast.ExpressionStatement")
+	}
+	infixExpress, ok := objectGetExpression.Expression.(*ast.InfixExpression)
+	if !ok {
+		t.Fatalf("objectGetExpression.Expression is not objectGetExpression.Expression")
+	}
+	if infixExpress.Left.String() != "h" {
+		t.Fatalf("infixExpress left error")
+	}
+	if infixExpress.Operator != "->" {
+		t.Fatalf("infixExpress Operator error")
+	}
+	if infixExpress.Right.String() != "age" {
+		t.Fatalf("infixExpress right error")
+	}
+}

@@ -31,6 +31,9 @@ const (
 	COMPILED_FUNCTION_OBJECT = "COMPILED_FUNCTION_OBJECT"
 	CLOSURE_OBJ              = "CLOSURE"
 	FLOAT_OBJ                = "FLOAT"
+	INTERFACE_OBJ            = "INTERFACE"
+	CLASS_OBJ                = "CLASS"
+	OBJECT_INSTANCE          = "OBJECT"
 )
 
 type Integer struct {
@@ -244,3 +247,35 @@ func (f *Float) Type() ObjectType { return FLOAT_OBJ }
 func (f *Float) HashKey() HashKey {
 	return HashKey{Type: f.Type(), Value: uint64(f.Value)}
 }
+
+type Interface struct {
+	Name      string
+	Functions []*Function
+}
+
+func (i *Interface) Inspect() string  { return fmt.Sprintf("interface %s", i.Name) }
+func (i *Interface) Json() string     { return fmt.Sprintf("interface %s", i.Name) }
+func (i *Interface) Type() ObjectType { return CLASS_OBJ }
+
+type Class struct {
+	Name      string
+	Variables Hash
+	Functions []*Function
+	Parents   []*Class
+	Interface *Interface
+}
+
+func (c *Class) Inspect() string  { return fmt.Sprintf("interface %s", c.Name) }
+func (c *Class) Json() string     { return fmt.Sprintf("interface %s", c.Name) }
+func (c *Class) Type() ObjectType { return CLASS_OBJ }
+
+type ObjectInstance struct {
+	InstanceClass Class
+	Environment   *Environment
+}
+
+func (oi *ObjectInstance) Inspect() string {
+	return fmt.Sprintf("object %s", oi.InstanceClass.Name)
+}
+func (oi *ObjectInstance) Json() string     { return fmt.Sprintf("object %s", oi.InstanceClass.Name) }
+func (oi *ObjectInstance) Type() ObjectType { return OBJECT_INSTANCE }

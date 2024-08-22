@@ -56,6 +56,7 @@ new
 extends
 implement
 interface
+->
 `
 
 	tests := []struct {
@@ -224,6 +225,8 @@ interface
 		{token.IMPLEMENT, "implement"},
 		{token.SEMICOLON, ";"},
 		{token.INTERFACE, "interface"},
+		{token.SEMICOLON, ";"},
+		{token.OBJET_GET, "->"},
 		{token.SEMICOLON, ";"},
 		{token.EOF, ""},
 	}

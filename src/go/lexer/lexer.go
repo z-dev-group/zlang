@@ -85,6 +85,8 @@ func (l *Lexer) NextToken() token.Token {
 			tok = l.newTokenWithTwoChar(token.MINUSASSIGN)
 		case '-':
 			tok = l.newTokenWithTwoChar(token.MINUSMINUS)
+		case '>':
+			tok = l.newTokenWithTwoChar(token.OBJET_GET)
 		default:
 			tok = newToken(token.MINUS, l.ch)
 		}

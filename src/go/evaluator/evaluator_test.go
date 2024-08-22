@@ -509,3 +509,26 @@ func TestForStatement(t *testing.T) {
 		}
 	}
 }
+
+func TestObjectStatement(t *testing.T) {
+	tests := []struct {
+		input    string
+		expected interface{}
+	}{
+		{"class Hello{fn age=12;}; let h = new Hello(); h->age", 12},
+	}
+	for _, tt := range tests {
+		evaluated := testEval(tt.input)
+		integer, ok := tt.expected.(int)
+		if ok {
+			testIntegerObject(t, evaluated, int64(integer))
+		} else {
+			objectError, ok := tt.expected.(object.Error)
+			if ok {
+				testErrorObject(t, evaluated, objectError)
+			} else {
+				testNullObject(t, evaluated)
+			}
+		}
+	}
+}
