@@ -53,6 +53,7 @@ var precedences = map[token.TokenType]int{
 	token.LPAREN:         CALL,
 	token.LBRACKET:       INDEX,
 	token.OBJET_GET:      INDEX,
+	token.CLASS_GET:      INDEX,
 }
 
 type Parser struct {
@@ -122,6 +123,7 @@ func New(l *lexer.Lexer) *Parser {
 	p.registerPrefix(token.INTERFACE, p.parseInterfaceExpress)
 	p.registerPrefix(token.NEW, p.parseNewExpression)
 	p.registerInfix(token.OBJET_GET, p.parseInfixExpression)
+	p.registerInfix(token.CLASS_GET, p.parseInfixExpression)
 	return p
 }
 

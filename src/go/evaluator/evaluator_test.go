@@ -510,12 +510,35 @@ func TestForStatement(t *testing.T) {
 	}
 }
 
+func TestClassStatement(t *testing.T) {
+	tests := []struct {
+		input    string
+		expected interface{}
+	}{
+		{`class World{let year_day=365}; World::year_day`, 365},
+	}
+	for _, tt := range tests {
+		evaluated := testEval(tt.input)
+		integer, ok := tt.expected.(int)
+		if ok {
+			testIntegerObject(t, evaluated, int64(integer))
+		} else {
+			objectError, ok := tt.expected.(object.Error)
+			if ok {
+				testErrorObject(t, evaluated, objectError)
+			} else {
+				testNullObject(t, evaluated)
+			}
+		}
+	}
+}
+
 func TestObjectStatement(t *testing.T) {
 	tests := []struct {
 		input    string
 		expected interface{}
 	}{
-		{`class World{let year_day=365}; class Hello extends World{let age = 12}; let h = new Hello(); h->year_day`, 365},
+		{`class World{let year_day=365}; class Hello extends World{let age = 12}; let h = new Hello(); h->age`, 12},
 	}
 	for _, tt := range tests {
 		evaluated := testEval(tt.input)

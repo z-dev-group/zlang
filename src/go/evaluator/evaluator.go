@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"z/ast"
 	"z/object"
+	"z/token"
 )
 
 var (
@@ -52,10 +53,10 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 			return left
 		}
 		right := Eval(node.Right, env)
-		if isError(right) && node.Operator != "->" {
+		if isError(right) && node.Operator != token.OBJET_GET && node.Operator != token.CLASS_GET {
 			return right
 		}
-		if node.Operator == "->" { // object get not need eval
+		if node.Operator == token.OBJET_GET || node.Operator == token.CLASS_GET { // object get not need eval
 			right = &object.String{Value: node.Right.String()}
 		}
 		infixValue := evalInfixExpression(node.Operator, left, right)
@@ -347,7 +348,7 @@ func isTruthy(obj object.Object) bool {
 
 func evalInfixExpression(operator string, left object.Object, right object.Object) object.Object {
 	switch {
-	case operator == "=":
+	case operator == token.ASSIGN:
 		return right
 	case left.Type() == object.INTEGER_OBJ && right.Type() == object.INTEGER_OBJ:
 		return evalIntegerInfixExpression(operator, left, right)
@@ -355,14 +356,16 @@ func evalInfixExpression(operator string, left object.Object, right object.Objec
 		return evalStringInfixExpression(operator, left, right)
 	case left.Type() == object.FLOAT_OBJ && right.Type() == object.FLOAT_OBJ:
 		return evalFloatInfixExpression(operator, left, right)
-	case operator == "==":
+	case operator == token.EQ:
 		return nativeBoolToBooleanObject(left == right)
-	case operator == "!=":
+	case operator == token.NOT_EQ:
 		return nativeBoolToBooleanObject(left != right)
 	case left.Type() == object.INTEGER_OBJ && right.Type() == object.BOOLEAN_OBJ:
 		return newError("type mismatch: %s %s %s", left.Type(), operator, right.Type())
-	case operator == "->":
-		return evalObjectGetInfixExpress(left, right)
+	case operator == token.OBJET_GET:
+		fallthrough
+	case operator == token.CLASS_GET:
+		return evalObjectGetInfixExpress(operator, left, right)
 	default:
 		return newError("unknown operator: %s %s %s", left.Type(), operator, right.Type())
 	}
@@ -644,24 +647,54 @@ func copyClassProperties(class *object.Class, env *object.Environment) bool {
 	return true
 }
 
-func evalObjectGetInfixExpress(left object.Object, right object.Object) object.Object {
-	objectInstance, ok := left.(*object.ObjectInstance)
-	if !ok {
-		return newError("object is not object")
+func evalObjectGetInfixExpress(operator string, left object.Object, right object.Object) object.Object {
+	switch operator {
+	case token.CLASS_GET:
+		class, ok := left.(*object.Class)
+		if !ok {
+			return newError("left is not ciass")
+		}
+		return getClassValue(class, right)
+	case token.OBJET_GET:
+		objectInstance, ok := left.(*object.ObjectInstance)
+		if !ok {
+			return newError("left is not object")
+		}
+		return getObjectInstanceValue(objectInstance, right)
 	}
-	isStatic := false
-	if isStatic {
-		return nil
-	}
-	return getObjectInstanceValue(objectInstance, right)
+	return NULL
 }
 
-func getObjectInstanceValue(objectInstance *object.ObjectInstance, right object.Object) object.Object {
-	rightIdentifier, ok := right.(*object.String)
+func getClassValue(class *object.Class, right object.Object) object.Object {
+	rightString, ok := right.(*object.String)
 	if !ok {
 		return newError("right is not string")
 	}
-	value, ok := objectInstance.Environment.Get(rightIdentifier.Value, "")
+	value, ok := class.Environment.Get(rightString.Value, "")
+	if ok {
+		functionValue, ok := value.(*object.Function)
+		if ok {
+			functionValue.Env = class.Environment
+			return functionValue
+		}
+		return value
+	} else {
+		for _, parent := range class.Parents {
+			value = getClassValue(parent, right)
+			if value != NULL {
+				return value
+			}
+		}
+	}
+	return NULL
+}
+
+func getObjectInstanceValue(objectInstance *object.ObjectInstance, right object.Object) object.Object {
+	rightString, ok := right.(*object.String)
+	if !ok {
+		return newError("right is not string")
+	}
+	value, ok := objectInstance.Environment.Get(rightString.Value, "")
 	if ok {
 		functionValue, ok := value.(*object.Function)
 		if ok {
@@ -670,5 +703,5 @@ func getObjectInstanceValue(objectInstance *object.ObjectInstance, right object.
 		}
 		return value
 	}
-	return nil
+	return NULL
 }

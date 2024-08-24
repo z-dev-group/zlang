@@ -144,7 +144,11 @@ func (l *Lexer) NextToken() token.Token {
 	case ']':
 		tok = newToken(token.RBRACKET, l.ch)
 	case ':':
-		tok = newToken(token.COLON, l.ch)
+		if l.peekChar() == ':' {
+			tok = l.newTokenWithTwoChar(token.CLASS_GET)
+		} else {
+			tok = newToken(token.COLON, l.ch)
+		}
 	case 0:
 		tok.Literal = ""
 		tok.Type = token.EOF

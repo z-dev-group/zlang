@@ -3,6 +3,9 @@ class TwoLeg {
 }
 class Animal {
   let age = 123
+  let show = fn() {
+    return "animal show"
+  }
 }
 class Hello extends Animal, TwoLeg {
   let name = "ddf"
@@ -12,12 +15,17 @@ class Hello extends Animal, TwoLeg {
   let set_name = fn(val) {
     name = val
   }
+  let show = fn() {
+    return "hello show"
+  }
 }
 
 let hf = new Hello()
 var_dump(hf->age)
 var_dump(hf->legs)
 var_dump(hf->show_name())
+
+var_dump(hf->show())
 
 let hs = new Hello()
 var_dump(hs->age)

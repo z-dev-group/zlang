@@ -35,6 +35,7 @@ const (
 	INTERFACE = "INTERFACE"
 	// oop object install value access
 	OBJET_GET = "->"
+	CLASS_GET = "::"
 
 	ASSIGN   = "="
 	PLUS     = "+"
