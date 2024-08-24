@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	"strconv"
+	"strings"
 	"z/ast"
 	"z/lexer"
 	"z/token"
@@ -45,13 +46,13 @@ var precedences = map[token.TokenType]int{
 	token.MINUSMINUS:     LESSGRATER,
 	token.ASSIGN:         LESSGRATER,
 	token.CLASS:          LESSGRATER,
-	token.OBJET_GET:      LESSGRATER,
 	token.PLUS:           SUM,
 	token.MINUS:          SUM,
 	token.SLASH:          PRODUCT,
 	token.ASTERISK:       PRODUCT,
 	token.LPAREN:         CALL,
 	token.LBRACKET:       INDEX,
+	token.OBJET_GET:      INDEX,
 }
 
 type Parser struct {
@@ -156,7 +157,9 @@ func (p *Parser) ParseProgram() *ast.Program {
 
 func (p *Parser) parseImportFile(program *ast.Program, fileName string) {
 	if runSourceDir != "" {
-		fileName = runSourceDir + "/" + fileName
+		if !strings.Contains(fileName, "builtin.z") {
+			fileName = runSourceDir + "/" + fileName
+		}
 	}
 	if _, err := os.Stat(fileName); err != nil {
 		if os.IsNotExist(err) {

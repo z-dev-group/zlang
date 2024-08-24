@@ -1,6 +1,7 @@
 package evaluator
 
 import (
+	"encoding/json"
 	"fmt"
 	"z/ast"
 	"z/object"
@@ -51,8 +52,11 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 			return left
 		}
 		right := Eval(node.Right, env)
-		if isError(right) {
+		if isError(right) && node.Operator != "->" {
 			return right
+		}
+		if node.Operator == "->" { // object get not need eval
+			right = &object.String{Value: node.Right.String()}
 		}
 		infixValue := evalInfixExpression(node.Operator, left, right)
 		resetOperators := []string{
@@ -153,6 +157,10 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		return &object.Float{Value: node.Value}
 	case *ast.ForExpression:
 		return evalForExpression(node, env)
+	case *ast.ClassExpress:
+		return evalClassExpression(node, env)
+	case *ast.ObjectExpress:
+		return evalObjectExpression(node, env)
 	}
 	return nil
 }
@@ -353,6 +361,8 @@ func evalInfixExpression(operator string, left object.Object, right object.Objec
 		return nativeBoolToBooleanObject(left != right)
 	case left.Type() == object.INTEGER_OBJ && right.Type() == object.BOOLEAN_OBJ:
 		return newError("type mismatch: %s %s %s", left.Type(), operator, right.Type())
+	case operator == "->":
+		return evalObjectGetInfixExpress(left, right)
 	default:
 		return newError("unknown operator: %s %s %s", left.Type(), operator, right.Type())
 	}
@@ -571,4 +581,94 @@ func evalForExpression(fe *ast.ForExpression, env *object.Environment) object.Ob
 		}
 	}
 	return NULL
+}
+
+func evalClassExpression(ce *ast.ClassExpress, env *object.Environment) object.Object {
+	classObject := &object.Class{
+		Name:    ce.Name.Value,
+		Parents: []*object.Class{},
+	}
+	classEnv := object.NewEnclosedEnviroment(env)
+	for _, letStatement := range ce.LetStatements {
+		value := Eval(letStatement, classEnv)
+		classEnv.Set(letStatement.Name.Value, value, "")
+	}
+	for _, parent := range ce.Parents {
+		parentObj, ok := env.Get(parent.Value, "")
+		if !ok {
+			return newError("parent class not exists")
+		}
+		parentClassObject, ok := parentObj.(*object.Class)
+		if !ok {
+			return newError("parent is not a class")
+		}
+		classObject.Parents = append(classObject.Parents, parentClassObject)
+	}
+	classObject.Environment = classEnv
+	env.Set(ce.Name.Value, classObject, "")
+	return classObject
+}
+
+func evalObjectExpression(oe *ast.ObjectExpress, env *object.Environment) object.Object {
+	objectInstance := &object.ObjectInstance{}
+	class, ok := env.Get(oe.Class.Value, "")
+	objectEnv := object.NewEnclosedEnviroment(env)
+	if ok {
+		instanceClass, ok := class.(*object.Class)
+		if ok {
+			objectInstance.InstanceClass = instanceClass
+			for _, parent := range instanceClass.Parents {
+				parentClassObject, ok := env.Get(parent.Name, "")
+				if ok {
+					parentClass, ok := parentClassObject.(*object.Class)
+					if ok {
+						copyClassProperties(parentClass, objectEnv)
+					}
+				}
+			}
+			copyClassProperties(instanceClass, objectEnv)
+			objectInstance.Environment = objectEnv
+		}
+	}
+	return objectInstance
+}
+
+func copyClassProperties(class *object.Class, env *object.Environment) bool {
+	clasEvnProperties := class.Environment.GetAll()
+	for name, classProperty := range clasEvnProperties {
+		newClassProperty := classProperty
+		buffer, _ := json.Marshal(&classProperty)
+		json.Unmarshal([]byte(buffer), newClassProperty)
+		env.Set(name, newClassProperty, "")
+	}
+	return true
+}
+
+func evalObjectGetInfixExpress(left object.Object, right object.Object) object.Object {
+	objectInstance, ok := left.(*object.ObjectInstance)
+	if !ok {
+		return newError("object is not object")
+	}
+	isStatic := false
+	if isStatic {
+		return nil
+	}
+	return getObjectInstanceValue(objectInstance, right)
+}
+
+func getObjectInstanceValue(objectInstance *object.ObjectInstance, right object.Object) object.Object {
+	rightIdentifier, ok := right.(*object.String)
+	if !ok {
+		return newError("right is not string")
+	}
+	value, ok := objectInstance.Environment.Get(rightIdentifier.Value, "")
+	if ok {
+		functionValue, ok := value.(*object.Function)
+		if ok {
+			functionValue.Env = objectInstance.Environment
+			return functionValue
+		}
+		return value
+	}
+	return nil
 }

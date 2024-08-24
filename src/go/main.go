@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"os/exec"
 	"os/user"
 	"strings"
 	"z/cli"
@@ -39,7 +40,13 @@ func main() {
 		sourceCode := string(fileContent)
 		sourceCodeLines := strings.Split(sourceCode, "\n")
 		if len(sourceCodeLines) > 0 {
-			builtinLine := `import "../standard/builtin.z";` // todo need path dir
+			dir, _ := exec.LookPath(os.Args[0])
+			buildSourceDir := dir
+			envZRoot, ok := os.LookupEnv("Z_ROOT")
+			if ok {
+				buildSourceDir = envZRoot
+			}
+			builtinLine := `import "` + buildSourceDir + `/standard/builtin.z";`
 			if strings.Contains(sourceCodeLines[0], "package") {
 				runSourceCodeLines := []string{}
 				runSourceCodeLines = append(runSourceCodeLines, sourceCodeLines[0])

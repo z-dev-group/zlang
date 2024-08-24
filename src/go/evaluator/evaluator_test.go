@@ -239,7 +239,7 @@ func TestFunctionObject(t *testing.T) {
 	if fn.Parameters[0].String() != "x" {
 		t.Fatalf("Parameter is not 'x', got=%q", fn.Parameters[0])
 	}
-	expectedBody := "(x + 2)"
+	expectedBody := "{(x + 2)}"
 
 	if fn.Body.String() != expectedBody {
 		t.Fatalf("body is not %q, got=%q", expectedBody, fn.Body.String())
@@ -515,7 +515,7 @@ func TestObjectStatement(t *testing.T) {
 		input    string
 		expected interface{}
 	}{
-		{"class Hello{fn age=12;}; let h = new Hello(); h->age", 12},
+		{`class World{let year_day=365}; class Hello extends World{let age = 12}; let h = new Hello(); h->year_day`, 365},
 	}
 	for _, tt := range tests {
 		evaluated := testEval(tt.input)

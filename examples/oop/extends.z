@@ -1,0 +1,30 @@
+class TwoLeg {
+  let legs = 2
+}
+class Animal {
+  let age = 123
+}
+class Hello extends Animal, TwoLeg {
+  let name = "ddf"
+  let show_name = fn() {
+    return "hello " + name
+  }
+  let set_name = fn(val) {
+    name = val
+  }
+}
+
+let hf = new Hello()
+var_dump(hf->age)
+var_dump(hf->legs)
+var_dump(hf->show_name())
+
+let hs = new Hello()
+var_dump(hs->age)
+var_dump(hs->show_name())
+
+hf->set_name("888")
+var_dump(hf->name)
+var_dump(hf->show_name())
+var_dump(hs->name)
+var_dump(hs->show_name())

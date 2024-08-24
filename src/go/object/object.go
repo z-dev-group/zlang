@@ -258,11 +258,10 @@ func (i *Interface) Json() string     { return fmt.Sprintf("interface %s", i.Nam
 func (i *Interface) Type() ObjectType { return CLASS_OBJ }
 
 type Class struct {
-	Name      string
-	Variables Hash
-	Functions []*Function
-	Parents   []*Class
-	Interface *Interface
+	Name        string
+	Parents     []*Class
+	Interface   *Interface
+	Environment *Environment
 }
 
 func (c *Class) Inspect() string  { return fmt.Sprintf("interface %s", c.Name) }
@@ -270,7 +269,7 @@ func (c *Class) Json() string     { return fmt.Sprintf("interface %s", c.Name) }
 func (c *Class) Type() ObjectType { return CLASS_OBJ }
 
 type ObjectInstance struct {
-	InstanceClass Class
+	InstanceClass *Class
 	Environment   *Environment
 }
 

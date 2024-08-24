@@ -1,0 +1,7 @@
+class Hello {
+  let age = 35
+}
+
+let h = new Hello()
+var_dump(h->age)
+var_dump(h->xx)
