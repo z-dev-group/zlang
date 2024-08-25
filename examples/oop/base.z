@@ -10,7 +10,7 @@ class Hello {
   }
 }
 
-let h = new hello()
+let h = new Hello()
 var_dump(h->get_name())
 h->set_name("777")
 var_dump(h->get_name())
