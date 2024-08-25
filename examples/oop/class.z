@@ -1,7 +1,19 @@
 class Hello {
   let age = 35
+  let name = ""
+  let _age = 31
+  fn get_age() {
+    name = "seven"
+    return age
+  }
+  fn get_name() {
+    return "xx"
+  }
 }
 
 let h = new Hello()
-var_dump(h->age)
-var_dump(h->xx)
+var_dump(h->get_age())
+var_dump(h->name)
+var_dump(Hello::age)
+
+var_dump(Hello::_age)

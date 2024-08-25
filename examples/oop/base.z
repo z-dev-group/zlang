@@ -1,0 +1,16 @@
+class Hello {
+  let name = "seven"
+
+  fn get_name() {
+    return name
+  }
+
+  fn set_name() {
+    name = "xx"
+  }
+}
+
+let h = new hello()
+var_dump(h->get_name())
+h->set_name("777")
+var_dump(h->get_name())

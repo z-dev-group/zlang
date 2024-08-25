@@ -3,6 +3,7 @@ package evaluator
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
 	"z/ast"
 	"z/object"
 	"z/token"
@@ -625,31 +626,44 @@ func evalObjectExpression(oe *ast.ObjectExpress, env *object.Environment) object
 		instanceClass, ok := class.(*object.Class)
 		if ok {
 			objectInstance.InstanceClass = instanceClass
-			for _, parent := range instanceClass.Parents {
-				parentClassObject, ok := env.Get(parent.Name, "")
-				if ok {
-					parentClass, ok := parentClassObject.(*object.Class)
-					if ok {
-						copyClassProperties(parentClass, objectEnv)
-					}
-				}
-			}
-			copyClassProperties(instanceClass, objectEnv)
+			copyClassProperties(instanceClass, objectEnv, false)
 			objectInstance.Environment = objectEnv
 		}
+		return objectInstance
+	} else {
+		return newError("class not found: " + oe.Class.Value)
 	}
-	return objectInstance
 }
 
-func copyClassProperties(class *object.Class, env *object.Environment) bool {
-	clasEvnProperties := class.Environment.GetAll()
-	for name, classProperty := range clasEvnProperties {
+func copyClassProperties(class *object.Class, env *object.Environment, isParent bool) {
+	classEvnProperties := class.Environment.GetAll()
+	newEnv := object.NewEnclosedEnviroment(env)
+
+	if len(class.Parents) > 0 {
+		for _, parent := range class.Parents {
+			copyClassProperties(parent, env, true)
+		}
+	}
+
+	for name, classProperty := range classEvnProperties {
 		newClassProperty := classProperty
 		buffer, _ := json.Marshal(&classProperty)
 		json.Unmarshal([]byte(buffer), newClassProperty)
+
+		functionValue, ok := newClassProperty.(*object.Function)
+		if ok {
+			if isParent {
+				functionValue.Env = newEnv
+			} else {
+				functionValue.Env = nil
+			}
+		}
+		newEnv.Set(name, newClassProperty, "")
+		if isParent && (strings.HasPrefix(name, "_") && !strings.HasPrefix(name, "__")) { // ignore parent _ start property
+			continue
+		}
 		env.Set(name, newClassProperty, "")
 	}
-	return true
 }
 
 func evalObjectGetInfixExpress(left object.Object, right object.Object) object.Object {
@@ -673,6 +687,9 @@ func getClassValue(class *object.Class, right object.Object) object.Object {
 	if !ok {
 		return newError("right is not string")
 	}
+	if strings.HasPrefix(rightString.Value, "_") {
+		return newError("class call can not with _ start, method is:" + rightString.Value)
+	}
 	value, ok := class.Environment.Get(rightString.Value, "")
 	if ok {
 		functionValue, ok := value.(*object.Function)
@@ -680,7 +697,6 @@ func getClassValue(class *object.Class, right object.Object) object.Object {
 			functionValue.Env = class.Environment
 			return functionValue
 		}
-		fmt.Println(value)
 		return value
 	} else {
 		for _, parent := range class.Parents {
@@ -702,7 +718,9 @@ func getObjectInstanceValue(objectInstance *object.ObjectInstance, right object.
 	if ok {
 		functionValue, ok := value.(*object.Function)
 		if ok {
-			functionValue.Env = objectInstance.Environment
+			if functionValue.Env == nil {
+				functionValue.Env = objectInstance.Environment
+			}
 			return functionValue
 		}
 		return value

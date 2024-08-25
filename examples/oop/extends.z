@@ -3,36 +3,28 @@ class TwoLeg {
 }
 class Animal {
   let age = 123
+  let parent_name = "xx name"
   let show = fn() {
-    return "animal show"
+    return "animal show--->" + parent_name
   }
 }
 class Hello extends Animal, TwoLeg {
   let name = "ddf"
-  fn show_name() {
-    return "hello " + name
-  }
   let set_name = fn(val) {
+    parent_name = "yy"
     name = val
   }
-  let show = fn() {
-    return "hello show"
+  fn show_name() {
+    return "hello " + name
   }
 }
 
 let hf = new Hello()
 var_dump(hf->age)
 var_dump(hf->legs)
+hf->set_name("dd")
 var_dump(hf->show_name())
-
 var_dump(hf->show())
 
-let hs = new Hello()
-var_dump(hs->age)
-var_dump(hs->show_name())
-
-hf->set_name("888")
-var_dump(hf->name)
-var_dump(hf->show_name())
-var_dump(hs->name)
-var_dump(hs->show_name())
+let show_name = hf->show_name;
+var_dump(show_name())

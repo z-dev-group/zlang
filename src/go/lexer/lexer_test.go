@@ -57,6 +57,8 @@ extends
 implement
 interface
 ->
+_name
+__age
 `
 
 	tests := []struct {
@@ -227,6 +229,10 @@ interface
 		{token.INTERFACE, "interface"},
 		{token.SEMICOLON, ";"},
 		{token.OBJET_GET, "->"},
+		{token.SEMICOLON, ";"},
+		{token.IDENT, "_name"},
+		{token.SEMICOLON, ";"},
+		{token.IDENT, "__age"},
 		{token.SEMICOLON, ";"},
 		{token.EOF, ""},
 	}

@@ -670,6 +670,9 @@ func (p *Parser) parseClassExpression() ast.Expression {
 			p.nextToken()
 			functionStatement := p.parseFunctionLiteral().(*ast.FunctionLiteral)
 			functionStatemens = append(functionStatemens, functionStatement)
+			if p.peekTokenIs(token.SEMICOLON) {
+				p.nextToken()
+			}
 		}
 		classExpression.Functions = functionStatemens
 	}

@@ -907,7 +907,7 @@ func TestForStatement(t *testing.T) {
 }
 
 func TestBaseClassStatement(t *testing.T) {
-	input := "class Hello{}"
+	input := "class Hello{fn say(){};fn good(){}}"
 	l := lexer.New(input)
 	p := New(l)
 	program := p.ParseProgram()
