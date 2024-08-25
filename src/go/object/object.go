@@ -90,6 +90,7 @@ func (rv *ReturnValue) Json() string     { return rv.Value.Json() }
 type Function struct {
 	Parameters []*ast.Identifier
 	Body       *ast.BlockStatement
+	Name       string
 	Env        *Environment
 }
 

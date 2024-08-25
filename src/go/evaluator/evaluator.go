@@ -98,7 +98,7 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 	case *ast.FunctionLiteral:
 		params := node.Parameters
 		body := node.Body
-		function := &object.Function{Parameters: params, Env: env, Body: body}
+		function := &object.Function{Parameters: params, Env: env, Body: body, Name: node.Name}
 		if node.Name != "" {
 			env.Set(node.Name, function, node.PackageName)
 		}
@@ -363,9 +363,9 @@ func evalInfixExpression(operator string, left object.Object, right object.Objec
 	case left.Type() == object.INTEGER_OBJ && right.Type() == object.BOOLEAN_OBJ:
 		return newError("type mismatch: %s %s %s", left.Type(), operator, right.Type())
 	case operator == token.OBJET_GET:
-		fallthrough
+		return evalObjectGetInfixExpress(left, right)
 	case operator == token.CLASS_GET:
-		return evalObjectGetInfixExpress(operator, left, right)
+		return evalClassGetInfixExpress(left, right)
 	default:
 		return newError("unknown operator: %s %s %s", left.Type(), operator, right.Type())
 	}
@@ -596,6 +596,11 @@ func evalClassExpression(ce *ast.ClassExpress, env *object.Environment) object.O
 		value := Eval(letStatement, classEnv)
 		classEnv.Set(letStatement.Name.Value, value, "")
 	}
+	for _, function := range ce.Functions {
+		value := Eval(function, classEnv)
+		functionValue, _ := value.(*object.Function)
+		classEnv.Set(function.Name, functionValue, "")
+	}
 	for _, parent := range ce.Parents {
 		parentObj, ok := env.Get(parent.Value, "")
 		if !ok {
@@ -647,22 +652,20 @@ func copyClassProperties(class *object.Class, env *object.Environment) bool {
 	return true
 }
 
-func evalObjectGetInfixExpress(operator string, left object.Object, right object.Object) object.Object {
-	switch operator {
-	case token.CLASS_GET:
-		class, ok := left.(*object.Class)
-		if !ok {
-			return newError("left is not ciass")
-		}
-		return getClassValue(class, right)
-	case token.OBJET_GET:
-		objectInstance, ok := left.(*object.ObjectInstance)
-		if !ok {
-			return newError("left is not object")
-		}
-		return getObjectInstanceValue(objectInstance, right)
+func evalObjectGetInfixExpress(left object.Object, right object.Object) object.Object {
+	objectInstance, ok := left.(*object.ObjectInstance)
+	if !ok {
+		return newError("left is not object")
 	}
-	return NULL
+	return getObjectInstanceValue(objectInstance, right)
+}
+
+func evalClassGetInfixExpress(left object.Object, right object.Object) object.Object {
+	class, ok := left.(*object.Class)
+	if !ok {
+		return newError("left is not ciass")
+	}
+	return getClassValue(class, right)
 }
 
 func getClassValue(class *object.Class, right object.Object) object.Object {
@@ -677,6 +680,7 @@ func getClassValue(class *object.Class, right object.Object) object.Object {
 			functionValue.Env = class.Environment
 			return functionValue
 		}
+		fmt.Println(value)
 		return value
 	} else {
 		for _, parent := range class.Parents {

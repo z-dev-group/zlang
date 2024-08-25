@@ -516,6 +516,8 @@ func TestClassStatement(t *testing.T) {
 		expected interface{}
 	}{
 		{`class World{let year_day=365}; World::year_day`, 365},
+		{`class World{let year_day=365; let get_year_day = fn() {return year_day};}; World::get_year_day()`, 365},
+		{`class World{let year_day=365; fn get_year_day() {return year_day};}; World::get_year_day()`, 365},
 	}
 	for _, tt := range tests {
 		evaluated := testEval(tt.input)

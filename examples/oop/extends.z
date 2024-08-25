@@ -9,7 +9,7 @@ class Animal {
 }
 class Hello extends Animal, TwoLeg {
   let name = "ddf"
-  let show_name = fn() {
+  fn show_name() {
     return "hello " + name
   }
   let set_name = fn(val) {
