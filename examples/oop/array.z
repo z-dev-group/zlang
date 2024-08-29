@@ -1,0 +1,33 @@
+class Array {
+  let _inner_array = []
+
+  fn values() {
+    return _inner_array
+  }
+
+  fn push(value) {
+    _inner_array = push(_inner_array, value)
+  }
+  fn length() {
+    return len(_inner_array)
+  }
+  fn get() {
+    return _inner_array
+  }
+  fn first() {
+    return _inner_array[0]
+  }
+  fn last() {
+    return _inner_array[len(_inner_array) - 1]
+  }
+}
+
+let a = new Array()
+
+var_dump(a->values())
+a->push("xx")
+a->push("YYYY")
+var_dump(a->values())
+var_dump(a->length())
+var_dump(a->first())
+var_dump(a->last())
