@@ -1,0 +1,9 @@
+class Controller {
+  fn returnSuccess(data) {
+    return {
+      "code": 0,
+      "msg": "ok",
+      "data": data
+    }
+  }
+}

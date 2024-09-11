@@ -77,7 +77,7 @@ type Error struct {
 
 func (e *Error) Type() ObjectType { return ERROR_OBJ }
 func (e *Error) Inspect() string  { return "ERROR: " + e.Message }
-func (n *Error) Json() string     { return "\"error\"" }
+func (e *Error) Json() string     { return "\"error:" + e.Message + "\"" }
 
 type ReturnValue struct {
 	Value Object

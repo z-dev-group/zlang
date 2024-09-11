@@ -1,5 +1,5 @@
 import "../standard/mysql.z"
-import "./controller/hello.z"
+import "./controller/user.z"
 let rootFn = fn(request) {
   var_dump(request["post"]["userNames"][0], "xx")
   return "this is root"
@@ -8,9 +8,7 @@ let helloFn = fn(request) {
   return "hello"
 }
 fn parametersFn(request) {
-  return {
-    "name": "seven"
-  }
+  return request
 }
 mysql_init("127.0.0.1:3306", "root", "123456", "test")
 let mysqlFn = fn(request) {
@@ -24,12 +22,13 @@ let mysqlFn = fn(request) {
   }
   return ret
 }
+let user = new User()
 let routes = {
   "/": rootFn,
   "/hello": helloFn,
   "/mysql": mysqlFn,
   "/parameters": parametersFn,
-  "/controller/hello": controller.hello,
+  "/controller/hello": user->getName,
   "/json": {
     "fn": mysqlFn,
     "cfg": {

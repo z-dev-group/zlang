@@ -35,7 +35,7 @@ func doHttpServe(w http.ResponseWriter, r *http.Request) {
 
 	function, ok := httpServerRoutes[path]
 	if ok {
-		result := Eval(function.Body, &initedEnv)
+		result := Eval(function.Body, function.Env)
 		routeConfig, ok := httpServerConfigs[path]
 		if ok {
 			contentType, ok := routeConfig["Content-Type"]
