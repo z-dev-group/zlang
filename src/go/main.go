@@ -16,7 +16,7 @@ func main() {
 	mode := "vm"
 	if len(os.Args) > 1 {
 		operation = os.Args[1]
-		if operation == "run" || operation == "build" {
+		if operation == "run" || operation == "build" || operation == "rundev" {
 			if len(os.Args) == 2 {
 				fmt.Println("please input source file")
 				return
@@ -63,6 +63,9 @@ func main() {
 			return
 		case "build":
 			cli.BuildSourceCode(sourceCode, fileName)
+			return
+		case "rundev":
+			cli.RunDev()
 			return
 		}
 	}
