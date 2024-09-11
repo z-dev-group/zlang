@@ -1,6 +1,9 @@
 import "./controller/controller.z"
 class User extends Controller{
   fn getName() {
-    return returnSuccess("ok")
+    return returnSuccess({
+      "name": "sevenpan",
+      "age": 18
+    })
   }
 }
