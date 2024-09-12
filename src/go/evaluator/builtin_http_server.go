@@ -27,6 +27,7 @@ func doHttpServe(w http.ResponseWriter, r *http.Request) {
 	err := json.Unmarshal(body, &postJson)
 	pairs := make(map[object.HashKey]object.HashPair)
 	if err == nil {
+		fmt.Println(postJson)
 		handlePostData(postJson, pairs)
 	}
 	handleGetData(r, pairs)
@@ -75,11 +76,22 @@ func handlePostData(postJson map[string]interface{}, pairs map[object.HashKey]ob
 		postItemName := object.String{Value: post}
 		postItemNameHashKey, _ := object.Object(&postItemName).(object.Hashable)
 		postItemNameHashed := postItemNameHashKey.HashKey()
-		postItemValue := object.String{Value: ""}
+		fmt.Println("value is", value)
 		valueStr, ok := value.(string)
 		if ok {
-			postItemValue.Value = valueStr
-			postPirs[postItemNameHashed] = object.HashPair{Key: &postItemName, Value: &postItemValue}
+			postPirs[postItemNameHashed] = object.HashPair{Key: &postItemName, Value: &object.String{Value: valueStr}}
+		}
+
+		valueInt, ok := value.(int)
+		if ok {
+			fmt.Println("is int")
+			postPirs[postItemNameHashed] = object.HashPair{Key: &postItemName, Value: &object.Integer{Value: int64(valueInt)}}
+		}
+
+		valueFloat, ok := value.(float64)
+		if ok {
+			fmt.Println("is float")
+			postPirs[postItemNameHashed] = object.HashPair{Key: &postItemName, Value: &object.Float{Value: valueFloat}}
 		}
 		array, ok := value.([]interface{})
 		if ok {
@@ -88,6 +100,14 @@ func handlePostData(postJson map[string]interface{}, pairs map[object.HashKey]ob
 				itemStr, ok := item.(string)
 				if ok {
 					arrayObj.Elements = append(arrayObj.Elements, &object.String{Value: itemStr})
+				}
+				itemInt, ok := item.(int64)
+				if ok {
+					arrayObj.Elements = append(arrayObj.Elements, &object.Integer{Value: itemInt})
+				}
+				itemFloat, ok := item.(float64)
+				if ok {
+					arrayObj.Elements = append(arrayObj.Elements, &object.Float{Value: itemFloat})
 				}
 			}
 			postPirs[postItemNameHashed] = object.HashPair{Key: &postItemName, Value: &arrayObj}

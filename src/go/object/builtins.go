@@ -1,12 +1,16 @@
 package object
 
 import (
+	"bytes"
 	"database/sql"
 	"fmt"
+	"io"
 	"log"
+	"net/http"
 	"os/exec"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/go-sql-driver/mysql"
 )
@@ -236,6 +240,68 @@ var Builtins = []struct {
 			}
 			objectType := args[0].Type()
 			return &String{Value: strings.ToLower(string(objectType))}
+		}},
+	},
+	{
+		"fetch",
+		&Builtin{Fn: func(args ...Object) Object {
+			if len(args) < 1 {
+				return newError("wrong number of arguments. need more than one, got=%d", len(args))
+			}
+			urlObject := args[0]
+			url, _ := urlObject.(*String)
+
+			option := &Hash{}
+			option.Pairs = make(map[HashKey]HashPair)
+			if len(args) == 2 {
+				option, _ = args[1].(*Hash)
+			}
+			client := &http.Client{
+				Timeout: time.Second * 10, // 设置超时时间
+			}
+			methodObject := String{Value: "method"}
+			methodHashPair, ok := option.Pairs[methodObject.HashKey()]
+			method := "GET"
+			if ok {
+				method = methodHashPair.Value.Inspect()
+			}
+			bodyObject := String{Value: "body"}
+			bodyHashParir, ok := option.Pairs[bodyObject.HashKey()]
+			body := ""
+			if ok {
+				body = bodyHashParir.Value.Json()
+			}
+			method = strings.ToUpper(method)
+			req, err := http.NewRequest(method, url.Value, bytes.NewReader([]byte(body)))
+			if err != nil {
+				return &Error{Message: err.Error()}
+			}
+			headersObject := String{Value: "headers"}
+			headersPair, ok := option.Pairs[headersObject.HashKey()]
+			headers := make(map[string]string)
+			if ok {
+				headersMap, ok := headersPair.Value.(*Hash)
+				if ok {
+					for _, value := range headersMap.Pairs {
+						headers[value.Key.Inspect()] = value.Value.Inspect()
+					}
+				}
+			}
+
+			for key, value := range headers {
+				req.Header.Set(key, value)
+			}
+
+			resp, err := client.Do(req)
+			if err != nil {
+				return &Error{Message: err.Error()}
+			}
+			defer resp.Body.Close()
+			responseBody, err := io.ReadAll(resp.Body)
+			if err != nil {
+				return &Error{Message: err.Error()}
+			}
+			return &String{Value: string(responseBody)}
 		}},
 	},
 }

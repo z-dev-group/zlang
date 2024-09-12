@@ -1,0 +1,9 @@
+let option = {
+  "method": "POST",
+  "body": {
+    "age": 12,
+    "name": "sevenpan"
+  }
+}
+let result = fetch("http://localhost:8080/parameters?name=sevenpan", option)
+var_dump(result)
