@@ -242,8 +242,8 @@ type Float struct {
 	Value float64
 }
 
-func (f *Float) Inspect() string  { return fmt.Sprintf("%f", f.Value) }
-func (f *Float) Json() string     { return fmt.Sprintf("%f", f.Value) }
+func (f *Float) Inspect() string  { return fmt.Sprintf("%v", f.Value) }
+func (f *Float) Json() string     { return fmt.Sprintf("%v", f.Value) }
 func (f *Float) Type() ObjectType { return FLOAT_OBJ }
 func (f *Float) HashKey() HashKey {
 	return HashKey{Type: f.Type(), Value: uint64(f.Value)}

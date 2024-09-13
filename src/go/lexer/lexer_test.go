@@ -60,6 +60,7 @@ interface
 _name
 __age
 `
+	input += "`hello`"
 
 	tests := []struct {
 		expectedType    token.TokenType
@@ -233,6 +234,8 @@ __age
 		{token.IDENT, "_name"},
 		{token.SEMICOLON, ";"},
 		{token.IDENT, "__age"},
+		{token.SEMICOLON, ";"},
+		{token.STRING, "hello"},
 		{token.SEMICOLON, ";"},
 		{token.EOF, ""},
 	}

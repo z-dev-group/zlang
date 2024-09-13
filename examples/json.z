@@ -1,0 +1,8 @@
+let jsonStr = `{"name": "sevenpan", "age": 12}`
+let jsonObj = json_decode(jsonStr);
+var_dump(jsonObj["name"])
+
+
+let json_decode_str = json_encode(jsonObj)
+var_dump(json_decode_str)
+var_dump(typeof(json_decode_str))

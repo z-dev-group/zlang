@@ -7,3 +7,6 @@ let option = {
 }
 let result = fetch("http://localhost:8080/parameters?name=sevenpan", option)
 var_dump(result)
+let resultArr = json_decode(result)
+var_dump(typeof(resultArr))
+var_dump(resultArr["post"])

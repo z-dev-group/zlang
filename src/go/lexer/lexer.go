@@ -153,8 +153,10 @@ func (l *Lexer) NextToken() token.Token {
 		tok.Literal = ""
 		tok.Type = token.EOF
 	case '"':
+		fallthrough
+	case '`':
 		tok.Type = token.STRING
-		tok.Literal = l.readString()
+		tok.Literal = l.readString(l.ch)
 	case '\n': // replace \n with ;
 		if preToken.Literal != ";" && preToken.Literal != "{" && preToken.Literal != "," && preToken.Literal != "" {
 			tok.Type = token.SEMICOLON
@@ -228,11 +230,11 @@ func (l *Lexer) readNumber() (string, bool) {
 	return l.input[position:l.position], isFloat
 }
 
-func (l *Lexer) readString() string {
+func (l *Lexer) readString(stringStart byte) string {
 	position := l.position + 1
 	for {
 		l.readChar()
-		if l.ch == '"' || l.ch == 0 {
+		if l.ch == stringStart || l.ch == 0 {
 			break
 		}
 	}

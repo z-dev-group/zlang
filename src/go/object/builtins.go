@@ -304,6 +304,15 @@ var Builtins = []struct {
 			return &String{Value: string(responseBody)}
 		}},
 	},
+	{
+		"json_encode",
+		&Builtin{Fn: func(args ...Object) Object {
+			if len(args) < 1 {
+				return newError("wrong number of arguments. need more than one, got=%d", len(args))
+			}
+			return &String{Value: args[0].Json()}
+		}},
+	},
 }
 
 func B2S(bs []uint8) string {

@@ -519,6 +519,10 @@ func evalIdentifier(node *ast.Identifier, env *object.Environment) object.Object
 	if node.Value == "http_server" {
 		return init_builtin_http_server()
 	}
+	if node.Value == "json_decode" {
+		return init_builtin_json_decode()
+	}
+
 	if !ok {
 		return newError("identifier not found:%s", node.Value)
 	}

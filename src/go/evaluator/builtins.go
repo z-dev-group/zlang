@@ -16,4 +16,5 @@ var Builtins = map[string]*object.Builtin{
 	"mysql_init":  object.GetBuiltinByName("mysql_init"),
 	"typeof":      object.GetBuiltinByName("typeof"),
 	"fetch":       object.GetBuiltinByName("fetch"),
+	"json_encode": object.GetBuiltinByName("json_encode"),
 }
