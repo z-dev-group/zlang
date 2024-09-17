@@ -156,3 +156,12 @@ _ 开头的变量为私有，否则公开, __ 是protectd 保护状态
 需要实现json_decode方法,但是在定义一个json字符串的时候，需要处理双引号的问题，我们需要支持``方式定义字符串
 json_decode 实现比较简单，把参数作为代码运行一下
 * 实现json_encode, json_decode
+
+### 2024-09-17
+中秋几天放假，基本就更新了一下z语言文档，地址是：[https://z-dev-group.github.io/zlang/](https://z-dev-group.github.io/zlang/)，语言功能没有更新，
+要不做一下错误处理，go的实现是返回多个参数，用一个来保存错误信息，java使用try catch捕获异常
+个人想法能不能统一用一个参数返回错误呢，通过with_error内置函数给一个普通变量携带上错误信息，通过is_with_error内置函数，判断变量是否错误信息，get_error_message获取变量错误信息
+with_error(variable, errorMessageStr) // 设置错误信息
+is_with_error(variable); // true or false
+get_error_message(variable);  // 获取错误信息
+* 错误处理,支持变量携带错误信息 ---> (float, integer, boolean, string, hash, array)

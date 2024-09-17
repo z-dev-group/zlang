@@ -38,6 +38,7 @@ const (
 
 type Integer struct {
 	Value int64
+	Error *Error
 }
 
 func (i *Integer) Inspect() string  { return fmt.Sprintf("%d", i.Value) }
@@ -49,6 +50,7 @@ func (i *Integer) HashKey() HashKey {
 
 type Boolean struct {
 	Value bool
+	Error *Error
 }
 
 func (b *Boolean) Inspect() string  { return fmt.Sprintf("%t", b.Value) }
@@ -114,6 +116,7 @@ func (rv *Function) Json() string { return "\"function\"" }
 
 type String struct {
 	Value string
+	Error *Error
 }
 
 func (s *String) Type() ObjectType { return STRING_OBJ }
@@ -136,6 +139,7 @@ func (b *Builtin) Json() string     { return "builtin function" }
 
 type Array struct {
 	Elements []Object
+	Error    *Error
 }
 
 func (ao *Array) Type() ObjectType { return ARRAY_OBJ }
@@ -178,6 +182,7 @@ type HashPair struct {
 
 type Hash struct {
 	Pairs map[HashKey]HashPair
+	Error *Error
 }
 
 func (h *Hash) Type() ObjectType {
@@ -240,6 +245,7 @@ func (c *Closure) Json() string {
 
 type Float struct {
 	Value float64
+	Error *Error
 }
 
 func (f *Float) Inspect() string  { return fmt.Sprintf("%v", f.Value) }

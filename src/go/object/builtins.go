@@ -313,6 +313,117 @@ var Builtins = []struct {
 			return &String{Value: args[0].Json()}
 		}},
 	},
+	{
+		"with_error",
+		&Builtin{Fn: func(args ...Object) Object {
+			if len(args) < 2 {
+				return newError("wrong number of arguments. need two, got=%d", len(args))
+			}
+			errorMessageObj := args[1]
+			errorMessage, ok := errorMessageObj.(*String)
+			if !ok {
+				return newError("parameter 2 need string")
+			}
+			err := newError(errorMessage.Value)
+			objectType := args[0].Type()
+			returnObj := args[0]
+			switch objectType { // float, integer, string, bool, hash, array
+			case STRING_OBJ:
+				returnObj, _ := args[0].(*String)
+				returnObj.Error = err
+			case FLOAT_OBJ:
+				returnObj, _ := args[0].(*Float)
+				returnObj.Error = err
+			case BOOLEAN_OBJ:
+				returnObj, _ := args[0].(*Boolean)
+				returnObj.Error = err
+			case INTEGER_OBJ:
+				returnObj, _ := args[0].(*Integer)
+				returnObj.Error = err
+			case HASH_OBJ:
+				returnObj, _ := args[0].(*Hash)
+				returnObj.Error = err
+			case ARRAY_OBJ:
+				returnObj, _ := args[0].(*Array)
+				returnObj.Error = err
+			}
+			return returnObj
+		}},
+	},
+	{
+		"is_with_error",
+		&Builtin{Fn: func(args ...Object) Object {
+			if len(args) < 1 {
+				return newError("wrong number of arguments. need more than one, got=%d", len(args))
+			}
+			objectType := args[0].Type()
+			isWithError := false
+			switch objectType { // float, integer, string, bool, hash, array
+			case STRING_OBJ:
+				returnObj, _ := args[0].(*String)
+				if returnObj.Error != nil {
+					isWithError = true
+				}
+			case FLOAT_OBJ:
+				returnObj, _ := args[0].(*Float)
+				if returnObj.Error != nil {
+					isWithError = true
+				}
+			case BOOLEAN_OBJ:
+				returnObj, _ := args[0].(*Boolean)
+				if returnObj.Error != nil {
+					isWithError = true
+				}
+			case INTEGER_OBJ:
+				returnObj, _ := args[0].(*Integer)
+				if returnObj.Error != nil {
+					isWithError = true
+				}
+			case HASH_OBJ:
+				returnObj, _ := args[0].(*Hash)
+				if returnObj.Error != nil {
+					isWithError = true
+				}
+			case ARRAY_OBJ:
+				returnObj, _ := args[0].(*Array)
+				if returnObj.Error != nil {
+					isWithError = true
+				}
+			}
+			return &Boolean{Value: isWithError}
+		}},
+	},
+	{
+		"get_error_message",
+		&Builtin{Fn: func(args ...Object) Object {
+			if len(args) < 1 {
+				return newError("wrong number of arguments. need more than one, got=%d", len(args))
+			}
+			objectType := args[0].Type()
+			errorMessage := ""
+			switch objectType { // float, integer, string, bool, hash, array
+			case STRING_OBJ:
+				returnObj, _ := args[0].(*String)
+				errorMessage = returnObj.Error.Message
+			case FLOAT_OBJ:
+				returnObj, _ := args[0].(*Float)
+				errorMessage = returnObj.Error.Message
+			case BOOLEAN_OBJ:
+				returnObj, _ := args[0].(*Boolean)
+				errorMessage = returnObj.Error.Message
+			case INTEGER_OBJ:
+				returnObj, _ := args[0].(*Integer)
+				errorMessage = returnObj.Error.Message
+			case HASH_OBJ:
+				returnObj, _ := args[0].(*Hash)
+				errorMessage = returnObj.Error.Message
+			case ARRAY_OBJ:
+				returnObj, _ := args[0].(*Array)
+				errorMessage = returnObj.Error.Message
+			}
+			return &String{Value: errorMessage}
+		}},
+	},
 }
 
 func B2S(bs []uint8) string {
