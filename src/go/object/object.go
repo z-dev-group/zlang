@@ -178,11 +178,13 @@ type HashKey struct {
 type HashPair struct {
 	Key   Object
 	Value Object
+	Index int8
 }
 
 type Hash struct {
-	Pairs map[HashKey]HashPair
-	Error *Error
+	Pairs    map[HashKey]HashPair
+	Error    *Error
+	MaxIndex int8
 }
 
 func (h *Hash) Type() ObjectType {
@@ -203,8 +205,13 @@ func (h *Hash) Inspect() string {
 func (h *Hash) Json() string {
 	var out bytes.Buffer
 	pairs := []string{}
-	for _, pair := range h.Pairs {
-		pairs = append(pairs, fmt.Sprintf("%s: %s", pair.Key.Json(), pair.Value.Json()))
+	maxIndex := h.MaxIndex
+	for i := 1; i <= int(maxIndex); i++ {
+		for _, pair := range h.Pairs {
+			if pair.Index == int8(i) {
+				pairs = append(pairs, fmt.Sprintf("%s: %s", pair.Key.Json(), pair.Value.Json()))
+			}
+		}
 	}
 	out.WriteString("{")
 	out.WriteString(strings.Join(pairs, ", "))

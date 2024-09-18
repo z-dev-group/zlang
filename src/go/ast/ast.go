@@ -319,6 +319,7 @@ func (ie *IndexExpression) String() string {
 type HashLiteral struct {
 	Token token.Token
 	Pairs map[Expression]Expression
+	Keys  []Expression
 }
 
 func (hl *HashLiteral) expressionNode()      {}

@@ -152,8 +152,14 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 			return newError("unusable as hash key: %s,", index.Type())
 		}
 		hashed := hashKey.HashKey()
-		hash.Pairs[hashed] = object.HashPair{Key: index, Value: val}
-
+		_, ok = hash.Pairs[hashed]
+		hashMaxIndex := hash.MaxIndex
+		if !ok {
+			hashMaxIndex = hash.MaxIndex + 1
+		}
+		hash.Pairs[hashed] = object.HashPair{Key: index, Value: val, Index: hashMaxIndex}
+		hash.MaxIndex = hashMaxIndex
+		env.Set(node.Hash.Value, hash, node.Hash.PackageName)
 		return val
 	case *ast.FloatLiteral:
 		return &object.Float{Value: node.Value}
@@ -170,7 +176,8 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 func evalHashLiteral(node *ast.HashLiteral, env *object.Environment) object.Object {
 	pairs := make(map[object.HashKey]object.HashPair)
 
-	for keyNode, valueNode := range node.Pairs {
+	hashMaxIndex := 0
+	for _, keyNode := range node.Keys {
 		key := Eval(keyNode, env)
 		if isError(key) {
 			return key
@@ -180,16 +187,17 @@ func evalHashLiteral(node *ast.HashLiteral, env *object.Environment) object.Obje
 		if !ok {
 			return newError("unusable as hash key: %s,", key.Type())
 		}
-
+		valueNode := node.Pairs[keyNode]
 		value := Eval(valueNode, env)
 		if isError(value) {
 			return value
 		}
 
 		hashed := hashKey.HashKey()
-		pairs[hashed] = object.HashPair{Key: key, Value: value}
+		hashMaxIndex++
+		pairs[hashed] = object.HashPair{Key: key, Value: value, Index: int8(hashMaxIndex)}
 	}
-	return &object.Hash{Pairs: pairs}
+	return &object.Hash{Pairs: pairs, MaxIndex: int8(hashMaxIndex)}
 }
 
 func evalIndexExpression(left, index object.Object) object.Object {

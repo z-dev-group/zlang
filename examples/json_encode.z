@@ -1,0 +1,12 @@
+let person = {
+  "name": "seven",
+  "age": 12,
+  "sex": 1
+}
+
+
+person["mood"] = "happy"
+
+for (let i = 0; i< 10; i++) {
+  var_dump(json_encode(person))
+}

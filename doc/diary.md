@@ -165,3 +165,7 @@ with_error(variable, errorMessageStr) // 设置错误信息
 is_with_error(variable); // true or false
 get_error_message(variable);  // 获取错误信息
 * 错误处理,支持变量携带错误信息 ---> (float, integer, boolean, string, hash, array)
+
+### 2024-09-18
+z语言的hash类型，也就是object类型，使用的go的map，当时map是没有顺序的，json_encode的时候，顺序不固定，想要修复一下，顺序固定
+* 使得hash类型json_encode顺序固定
