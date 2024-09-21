@@ -169,3 +169,14 @@ get_error_message(variable);  // 获取错误信息
 ### 2024-09-18
 z语言的hash类型，也就是object类型，使用的go的map，当时map是没有顺序的，json_encode的时候，顺序不固定，想要修复一下，顺序固定
 * 使得hash类型json_encode顺序固定
+
+### 2024-09-21
+把hash统一叫做object，避免歧义
+
+```
+let person = {
+  "name": "seven",
+  "age": 12
+}
+typeof(person)
+```
