@@ -22,6 +22,10 @@ fn is_null(variable) {
   return typeof(variable) == "null"
 }
 
+fn is_object(variable) {
+  return typeof(variable) == "object"
+}
+
 fn var_dump(variable) {
   puts(variable, "\n")
 }

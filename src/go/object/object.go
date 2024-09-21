@@ -27,7 +27,7 @@ const (
 	STRING_OBJ               = "STRING"
 	BUILTIN_OBJ              = "BUILTIN"
 	ARRAY_OBJ                = "ARRAY"
-	HASH_OBJ                 = "HASH"
+	HASH_OBJ                 = "OBJECT" // hash_obj as object
 	COMPILED_FUNCTION_OBJECT = "COMPILED_FUNCTION_OBJECT"
 	CLOSURE_OBJ              = "CLOSURE"
 	FLOAT_OBJ                = "FLOAT"
