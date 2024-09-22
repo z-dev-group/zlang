@@ -180,3 +180,6 @@ let person = {
 }
 typeof(person)
 ```
+
+### 2024-09-22
+支持syscall，使用syscall封装系统相关函数，比如getpid，getppid
