@@ -10,6 +10,7 @@ import (
 	"os/exec"
 	"strconv"
 	"strings"
+	"syscall"
 	"time"
 
 	"github.com/go-sql-driver/mysql"
@@ -217,7 +218,7 @@ var Builtins = []struct {
 					}
 					ui, ok := val.([]uint8)
 					if ok {
-						v = B2S(ui)
+						v = b2S(ui)
 					}
 					i64, ok := val.(int64)
 					if ok {
@@ -424,9 +425,38 @@ var Builtins = []struct {
 			return &String{Value: errorMessage}
 		}},
 	},
+	{
+		"syscall",
+		&Builtin{Fn: func(args ...Object) Object {
+			if len(args) < 1 {
+				return newError("wrong number of arguments. need more than four, got=%d", len(args))
+			}
+			var trap, a1, a2, a3 = 0, 0, 0, 0
+			trapObj, ok := args[0].(*Integer)
+			if ok {
+				trap = int(trapObj.Value)
+			}
+			if len(args) > 1 {
+				a1Obj, ok := args[1].(*Integer)
+				if ok {
+					a1 = int(a1Obj.Value)
+				}
+			}
+			pid, r2, err := syscall.Syscall(uintptr(trap), uintptr(a1), uintptr(a2), uintptr(a3))
+			ret := &Hash{}
+			ret.Pairs = make(map[HashKey]HashPair)
+			result1 := String{Value: "result1"}
+			result2 := String{Value: "result2"}
+			error_msg := String{Value: "error_msg"}
+			ret.Pairs[result1.HashKey()] = HashPair{Key: &String{Value: "result1"}, Value: &Integer{Value: int64(pid)}}
+			ret.Pairs[result2.HashKey()] = HashPair{Key: &String{Value: "result2"}, Value: &Integer{Value: int64(r2)}}
+			ret.Pairs[error_msg.HashKey()] = HashPair{Key: &String{Value: "error_msg"}, Value: &String{Value: err.Error()}}
+			return ret
+		}},
+	},
 }
 
-func B2S(bs []uint8) string {
+func b2S(bs []uint8) string {
 	ba := []byte{}
 	for _, b := range bs {
 		ba = append(ba, byte(b))

@@ -1,0 +1,4 @@
+import "../standard/os.z"
+
+var_dump(os.getpid())
+var_dump(os.getppid())

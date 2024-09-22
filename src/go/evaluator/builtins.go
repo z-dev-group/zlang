@@ -20,4 +20,5 @@ var Builtins = map[string]*object.Builtin{
 	"with_error":        object.GetBuiltinByName("with_error"),
 	"is_with_error":     object.GetBuiltinByName("is_with_error"),
 	"get_error_message": object.GetBuiltinByName("get_error_message"),
+	"syscall":           object.GetBuiltinByName("syscall"),
 }
