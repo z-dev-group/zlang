@@ -1,10 +1,22 @@
 package file
-
+let O_RDONLY = 0 // read only
+let O_WRONLY = 1 // write only
+let O_RDWR = 2   // read write
+let O_APPEND = 4 // append
+let O_CREAT = 512
+let O_EXCL = 2048
+let O_SYNC = 128
+let O_TRUNC = 1024
 fn open(path) {
-  let result = syscall(5, path, 1538, 0666)
+  let result = syscall(5, path, O_CREAT + O_APPEND + O_WRONLY, 0666)
   if (result["error_msg"] == "errno 0") {
     return result["result1"] // return pid
-  }else {
+  } else {
     return with_error(0, result["error_msg"])
   }
+}
+fn append(path, content) {
+  let pid = open(path)
+  let result = syscall(4, pid, content, len(content))
+  return result
 }
