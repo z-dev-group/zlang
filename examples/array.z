@@ -14,3 +14,16 @@ var_dump(ages)
 var_dump(ages[1 + 1])
 ages[1 + 1]
 var_dump(array.index(names, "tony"))
+
+puts("first ages is:")
+let firstVal = first("xx")
+if (is_with_error(firstVal)) {
+  var_dump(get_error_message(firstVal))
+}
+
+firstVal = first(ages)
+var_dump(firstVal)
+
+var_dump(last(ages))
+
+var_dump(rest(ages))

@@ -495,6 +495,12 @@ func evalBangOperatorExpression(right object.Object) object.Object {
 	case NULL:
 		return TRUE
 	default:
+		boolObj, ok := right.(*object.Boolean) // fixed right is not the same variable
+		if ok {
+			if !boolObj.Value {
+				return TRUE
+			}
+		}
 		return FALSE
 	}
 }

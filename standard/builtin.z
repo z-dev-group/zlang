@@ -26,6 +26,10 @@ fn is_object(variable) {
   return typeof(variable) == "object"
 }
 
+fn is_array(variable) {
+  return typeof(variable) == "array"
+}
+
 fn var_dump(variable) {
   puts(variable, "\n")
 }
@@ -183,4 +187,38 @@ fn char_to_lower(variable) {
   } else {
     return string
   }
+}
+
+fn first(arr) {
+  if (!is_array(arr)) {
+    return with_error("", "arr should be array")
+  }
+  if(len(arr) == 0) {
+    return with_error("", "arr len should more than one")
+  }
+  return arr[0]
+}
+
+fn last(arr) {
+  if (!is_array(arr)) {
+    return with_error("", "arr should be array")
+  }
+  if(len(arr) == 0) {
+    return with_error("", "arr len should more than one")
+  }
+  return arr[len(arr) - 1]
+}
+
+fn rest(arr) {
+  if (!is_array(arr)) {
+    return with_error("", "arr should be array")
+  }
+  if(len(arr) == 0) {
+    return with_error("", "arr len should more than one")
+  }
+  let newArr = []
+  for (let i = 1; i < len(arr); i++) {
+    newArr = push(newArr, arr[i])
+  }
+  return newArr
 }

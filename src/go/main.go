@@ -74,5 +74,5 @@ func main() {
 		panic(err)
 	}
 	fmt.Println("Welcome to z language , user is: ", user.Username, " type code to execute")
-	repl.CStart(os.Stdin, os.Stdout)
+	repl.Start(os.Stdin, os.Stdout)
 }
