@@ -12,6 +12,7 @@ import (
 	"strings"
 	"syscall"
 	"time"
+	"unsafe"
 
 	"github.com/go-sql-driver/mysql"
 )
@@ -376,18 +377,45 @@ var Builtins = []struct {
 			if len(args) < 1 {
 				return newError("wrong number of arguments. need more than four, got=%d", len(args))
 			}
-			var trap, a1, a2, a3 = 0, 0, 0, 0
+			var trap, a1, a2, a3 uintptr = 0, 0, 0, 0
 			trapObj, ok := args[0].(*Integer)
 			if ok {
-				trap = int(trapObj.Value)
+				trap = uintptr(int(trapObj.Value))
 			}
 			if len(args) > 1 {
-				a1Obj, ok := args[1].(*Integer)
+				a1ObjInt, ok := args[1].(*Integer)
 				if ok {
-					a1 = int(a1Obj.Value)
+					a1 = uintptr(a1ObjInt.Value)
+				}
+				a1ObjStr, ok := args[1].(*String)
+				if ok {
+					_p0, _ := syscall.BytePtrFromString(a1ObjStr.Value)
+					a1 = uintptr(unsafe.Pointer(_p0))
 				}
 			}
-			pid, r2, err := syscall.Syscall(uintptr(trap), uintptr(a1), uintptr(a2), uintptr(a3))
+			if len(args) > 2 {
+				a1ObjInt, ok := args[2].(*Integer)
+				if ok {
+					a2 = uintptr(a1ObjInt.Value)
+				}
+				a1ObjStr, ok := args[2].(*String)
+				if ok {
+					_p0, _ := syscall.BytePtrFromString(a1ObjStr.Value)
+					a2 = uintptr(unsafe.Pointer(_p0))
+				}
+			}
+			if len(args) > 3 {
+				a1ObjInt, ok := args[3].(*Integer)
+				if ok {
+					a3 = uintptr(a1ObjInt.Value)
+				}
+				a1ObjStr, ok := args[3].(*String)
+				if ok {
+					_p0, _ := syscall.BytePtrFromString(a1ObjStr.Value)
+					a3 = uintptr(unsafe.Pointer(_p0))
+				}
+			}
+			pid, r2, err := syscall.Syscall(trap, a1, a2, a3)
 			ret := &Hash{}
 			ret.Pairs = make(map[HashKey]HashPair)
 			result1 := String{Value: "result1"}

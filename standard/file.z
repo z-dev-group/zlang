@@ -1,0 +1,10 @@
+package file
+
+fn open(path) {
+  let result = syscall(5, path, 1538, 0666)
+  if (result["error_msg"] == "errno 0") {
+    return result["result1"] // return pid
+  }else {
+    return with_error(0, result["error_msg"])
+  }
+}

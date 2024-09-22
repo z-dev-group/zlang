@@ -3,8 +3,6 @@ with_error(age, "this is test error")
 var_dump(age)
 if (is_with_error(age)) {
   puts("has error", "\n")
-
-  //get_error_message(age)
   puts("get error message is:" + get_error_message(age), "\n")
 }
 
