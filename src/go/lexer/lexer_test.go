@@ -59,6 +59,7 @@ interface
 ->
 _name
 __age
+defer {}
 `
 	input += "`hello`"
 
@@ -235,6 +236,11 @@ __age
 		{token.SEMICOLON, ";"},
 		{token.IDENT, "__age"},
 		{token.SEMICOLON, ";"},
+		{token.DEFER, "defer"},
+		{token.LBRACE, "{"},
+		{token.RBRACE, "}"},
+		{token.SEMICOLON, ";"},
+		// special string
 		{token.STRING, "hello"},
 		{token.SEMICOLON, ";"},
 		{token.EOF, ""},

@@ -26,6 +26,7 @@ const (
 	BREAK    = "BREAK"
 	PACKAGE  = "PACKAGE"
 	FOR      = "FOR"
+	DEFER    = "DEFER"
 
 	// oop keyword
 	CLASS     = "CLASS"
@@ -92,6 +93,7 @@ var keywords = map[string]TokenType{
 	"extends":   EXTENDS,
 	"implement": IMPLEMENT,
 	"interface": INTERFACE,
+	"defer":     DEFER,
 }
 
 func LookIndent(indent string) TokenType {
