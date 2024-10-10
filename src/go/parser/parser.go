@@ -124,6 +124,7 @@ func New(l *lexer.Lexer) *Parser {
 	p.registerPrefix(token.NEW, p.parseNewExpression)
 	p.registerInfix(token.OBJET_GET, p.parseInfixExpression)
 	p.registerInfix(token.CLASS_GET, p.parseInfixExpression)
+	p.registerPrefix(token.DEFER, p.parseDeferExpression)
 	return p
 }
 
@@ -404,7 +405,18 @@ func (p *Parser) parseBlockStatement() *ast.BlockStatement {
 
 	for !p.curTokenIs(token.RBRACE) && !p.curTokenIs(token.EOF) {
 		stmt := p.parseStatement()
-		if stmt != nil {
+		expression, ok := stmt.(*ast.ExpressionStatement)
+		isDeferBlock := false
+		if ok {
+			deferBlock, ok := expression.Expression.(*ast.BlockStatement)
+			if ok {
+				if deferBlock.IsDeferBlock {
+					isDeferBlock = true
+					block.DeferStatements = deferBlock.Statements
+				}
+			}
+		}
+		if stmt != nil && !isDeferBlock {
 			block.Statements = append(block.Statements, stmt)
 		}
 		p.nextToken()
@@ -731,4 +743,20 @@ func (p *Parser) parseNewExpression() ast.Expression {
 	p.expectPeek(token.LPAREN)
 	p.expectPeek(token.RPAREN)
 	return newExpression
+}
+
+func (p *Parser) parseDeferExpression() ast.Expression { // same as parseBlockStatement , except IsDeferBlock: true
+	block := &ast.BlockStatement{Token: p.curToken, IsDeferBlock: true}
+	block.Statements = []ast.Statement{}
+	p.nextToken()
+	p.nextToken()
+
+	for !p.curTokenIs(token.RBRACE) && !p.curTokenIs(token.EOF) {
+		stmt := p.parseStatement()
+		if stmt != nil {
+			block.Statements = append(block.Statements, stmt)
+		}
+		p.nextToken()
+	}
+	return block
 }

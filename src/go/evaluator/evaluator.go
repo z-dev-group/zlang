@@ -17,7 +17,7 @@ var (
 	withBreakKey = "is_with_break"
 	isWithBreak  = "Y"
 	notWithBreak = "N"
-	breadKeyWord = "break"
+	breakKeyWord = "break"
 )
 
 func isError(obj object.Object) bool {
@@ -508,20 +508,28 @@ func evalBangOperatorExpression(right object.Object) object.Object {
 func evalBlockStatement(block *ast.BlockStatement, env *object.Environment) object.Object {
 	var result object.Object
 	for _, statement := range block.Statements {
-		if statement.TokenLiteral() == breadKeyWord {
+		if statement.TokenLiteral() == breakKeyWord {
 			env.Context[withBreakKey] = isWithBreak
+			evalDeferStatement(block.DeferStatements, env)
 			return result
 		}
 		result = Eval(statement, env)
 		if result != nil {
 			rt := result.Type()
 			if rt == object.RETURN_VALUE_OBJ || rt == object.ERROR_OBJ {
+				evalDeferStatement(block.DeferStatements, env)
 				return result
 			}
-
 		}
 	}
+	evalDeferStatement(block.DeferStatements, env)
 	return result
+}
+
+func evalDeferStatement(statements []ast.Statement, env *object.Environment) {
+	for _, statement := range statements {
+		Eval(statement, env)
+	}
 }
 
 func evalIdentifier(node *ast.Identifier, env *object.Environment) object.Object {

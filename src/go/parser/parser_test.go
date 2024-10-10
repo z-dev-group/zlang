@@ -1135,3 +1135,50 @@ func TestObjectValueStatement(t *testing.T) {
 		t.Fatalf("infixExpress right error")
 	}
 }
+
+func TestDeferExpression(t *testing.T) {
+	input := `
+	let a = 1;
+	if (a > 0) {
+		defer {
+			let a = 1;
+		}
+		let b = 0;
+	}
+	`
+
+	l := lexer.New(input)
+	p := New(l)
+
+	program := p.ParseProgram()
+
+	if len(program.Statements) != 2 {
+		t.Fatalf("program has not enough statements, expected 1, got=%d, statement is: %s", len(program.Statements), program.String())
+	}
+	stms, ok := program.Statements[0].(*ast.LetStatement)
+
+	if !ok {
+		t.Fatalf("program.Statements[0] is not LetStatement, got=%s", stms.String())
+	}
+
+	epst, ok := program.Statements[1].(*ast.ExpressionStatement)
+
+	if !ok {
+		t.Fatalf("program.Statements[1] is not ExpressionStatement, got=%s", epst.String())
+	}
+
+	expression, ok := epst.Expression.(*ast.IfExpression)
+	if !ok {
+		t.Fatalf("epst.Expression is not if Expression,got=%s", expression.String())
+	}
+
+	block := expression.Consequence
+
+	if len(block.Statements) != 1 {
+		t.Fatalf("block statment len error, expected 1, got=%d", len(block.Statements))
+	}
+
+	if len(block.DeferStatements) != 1 {
+		t.Fatalf("block statement defer error ,expected 1, got=%d", len(block.DeferStatements))
+	}
+}

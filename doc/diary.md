@@ -195,3 +195,37 @@ defer {
 }
 ```
 先做个简单的词法分析，明天继续
+
+### 2024-10-10
+继续做defer的功能，目前实现是在{}里面的代码支持defer{}操作,比如if 语句中，函数中等
+```
+fn hello() {
+  var_dump("first hello")
+  defer {
+    var_dump("world")
+  }
+  var_dump("hello")
+}
+
+fn hello_if() {
+  let a = 1;
+  if (a > 0) {
+    defer {
+      var_dump("end print")
+    }
+    var_dump("big than 0")
+  }
+}
+
+hello()
+hello_if()
+```
+
+预计输出
+```
+first hello
+hello
+world
+big than 0
+end print
+```

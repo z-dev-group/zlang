@@ -200,8 +200,10 @@ func (ie *IfExpression) String() string {
 }
 
 type BlockStatement struct {
-	Token      token.Token
-	Statements []Statement
+	Token           token.Token
+	Statements      []Statement
+	DeferStatements []Statement
+	IsDeferBlock    bool
 }
 
 func (bs *BlockStatement) expressionNode()      {}

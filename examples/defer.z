@@ -1,0 +1,21 @@
+fn hello() {
+  var_dump("first hello")
+  defer {
+    var_dump("world")
+  }
+  var_dump("hello")
+}
+
+fn hello_if() {
+  let a = 1;
+  if (a > 0) {
+    defer {
+      if (a > 0) {
+        var_dump("end print")
+      }
+    }
+    var_dump("big than 0")
+  }
+}
+hello()
+hello_if()
