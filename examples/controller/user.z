@@ -1,4 +1,4 @@
-import "./controller/controller.z"
+import "./controller.z"
 class User extends Controller{
   fn getName() {
     return returnSuccess({

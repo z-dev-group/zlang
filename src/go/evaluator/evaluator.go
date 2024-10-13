@@ -256,6 +256,12 @@ func applyFunction(fn object.Object, args []object.Object) object.Object {
 	switch fn := fn.(type) {
 	case *object.Function:
 		extendEnv := extendFunctionEnv(fn, args)
+		if fn.Env != nil {
+			this, ok := fn.Env.Get("this", "")
+			if ok {
+				extendEnv.Set("this", this, "")
+			}
+		}
 		evaluated := Eval(fn.Body, extendEnv)
 		return unwrapReturnValue(evaluated)
 	case *object.Builtin:
@@ -747,6 +753,7 @@ func getObjectInstanceValue(objectInstance *object.ObjectInstance, right object.
 			if functionValue.Env == nil {
 				functionValue.Env = objectInstance.Environment
 			}
+			functionValue.Env.Set("this", objectInstance, "")
 			return functionValue
 		}
 		return value
