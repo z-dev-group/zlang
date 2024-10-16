@@ -1,3 +1,10 @@
+class Car {
+  let _name = "tesla"
+  fn drive() {
+    var_dump("drive--->" + _name)
+  }
+}
+
 class User {
   let _name = "seven"
   let _age = 12
@@ -12,8 +19,13 @@ class User {
     return this
   }
   fn dump() {
+    defer {
+      var_dump("defer call....")
+    }
     var_dump(_name)
     var_dump(_age)
+    let car = new Car()
+    car->drive()
   }
 }
 

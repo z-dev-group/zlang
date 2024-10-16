@@ -239,3 +239,33 @@ this->setName("sevenpan")->setAge(12)->dump();
 
 ### 2024-10-13
 实现this在对象方法中的使用，不要词法分析，语法分析，只需要在对应的位置往环境变量注入实例，简单实现
+
+
+### 2024-10-16
+准备实现对象的构造方法，毕竟实际开发中，构造方法还是很实用
+
+```
+class User {
+  let _name = "seven"
+  let _age = 12
+  fn __init(name, age) {
+    _name = name
+    _age = age
+  }
+  fn dump() {
+    var_dump(name)
+    var_dump(age)
+  }
+}
+let user = new User("pantingwen", 25)
+user->dump()
+```
+预计输出
+```
+pantingwen
+25
+```
+
+思路：
+对象的定义里面要支持参数的解析，参考函数
+对象初始化之后，检查是否__init 函数，如果有，调用

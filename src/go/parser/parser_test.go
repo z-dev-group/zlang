@@ -1093,7 +1093,7 @@ func TestObjectStatement(t *testing.T) {
 }
 
 func TestObjectValueStatement(t *testing.T) {
-	input := "let h = new Hello(); h->age"
+	input := `let h = new Hello("name", 12); h->age`
 	l := lexer.New(input)
 	p := New(l)
 	program := p.ParseProgram()
@@ -1115,6 +1115,14 @@ func TestObjectValueStatement(t *testing.T) {
 	}
 	if objectExpress.Class.Value != "Hello" {
 		t.Fatalf("class Name error, expected Hello, got=%s", objectExpress.Class.Value)
+	}
+
+	if len(objectExpress.Parameters) != 2 {
+		t.Fatalf("class parameter len error, expected 2, got=%d", len(objectExpress.Parameters))
+	}
+
+	if objectExpress.Parameters[0].TokenLiteral() != "name" {
+		t.Fatalf("class parameter1 token error, expected name , got=%s", objectExpress.Parameters[0].TokenLiteral())
 	}
 
 	objectGetExpression, ok := program.Statements[1].(*ast.ExpressionStatement)

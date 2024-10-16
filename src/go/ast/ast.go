@@ -485,8 +485,9 @@ func (ce *ClassExpress) String() string {
 }
 
 type ObjectExpress struct {
-	Token token.Token
-	Class *Identifier
+	Token      token.Token
+	Class      *Identifier
+	Parameters []Expression
 }
 
 func (oe *ObjectExpress) expressionNode() {}
@@ -498,7 +499,14 @@ func (oe *ObjectExpress) String() string {
 	out.WriteString("new")
 	out.WriteString(" ")
 	out.WriteString(oe.Class.TokenLiteral())
-	out.WriteString("()")
+	params := []string{}
+	for _, p := range oe.Parameters {
+		params = append(params, p.String())
+	}
+	out.WriteString("(")
+	out.WriteString(strings.Join(params, ", "))
+	out.WriteString(") ")
+
 	out.WriteString("")
 	return out.String()
 }

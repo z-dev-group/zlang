@@ -1,0 +1,24 @@
+class User {
+  let _name = ""
+  let _age = 0
+
+  fn __init(name, age) {
+    var_dump("dfd")
+    _name = name
+    _age = age
+  }
+  fn dump() {
+    var_dump(_name)
+    var_dump(_age)
+  }
+  fn setName(name) {
+    _name = name
+    return this
+  }
+}
+
+let c = new User("sevenpan", 12)
+c->dump()
+c->setName("seven")->dump()
+let name = "xx"
+c->setName(name)->dump()

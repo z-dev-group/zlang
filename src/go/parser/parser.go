@@ -741,7 +741,7 @@ func (p *Parser) parseNewExpression() ast.Expression {
 		Value: p.curToken.Literal,
 	}
 	p.expectPeek(token.LPAREN)
-	p.expectPeek(token.RPAREN)
+	newExpression.Parameters = p.parseExpressionList(token.RPAREN)
 	return newExpression
 }
 

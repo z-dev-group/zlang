@@ -168,7 +168,23 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 	case *ast.ClassExpress:
 		return evalClassExpression(node, env)
 	case *ast.ObjectExpress:
-		return evalObjectExpression(node, env)
+		evaledObject := evalObjectExpression(node, env)
+		objectExpression, ok := evaledObject.(*object.ObjectInstance)
+		if ok {
+			init, ok := objectExpression.Environment.Get("__init", "")
+			if ok {
+				initFn, ok := init.(*object.Function)
+				if ok {
+					args := evalExpressions(node.Parameters, objectExpression.Environment)
+					initFn.Env = objectExpression.Environment
+					for index := range initFn.Parameters {
+						initFn.Env.Set(initFn.Parameters[index].Value, args[index], "")
+					}
+					applyFunction(initFn, args)
+				}
+			}
+		}
+		return evaledObject
 	}
 	return nil
 }
@@ -257,6 +273,7 @@ func applyFunction(fn object.Object, args []object.Object) object.Object {
 	case *object.Function:
 		extendEnv := extendFunctionEnv(fn, args)
 		if fn.Env != nil {
+			extendEnv := fn.Env
 			this, ok := fn.Env.Get("this", "")
 			if ok {
 				extendEnv.Set("this", this, "")
