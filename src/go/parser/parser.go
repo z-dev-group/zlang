@@ -5,6 +5,7 @@ package parser
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"z/ast"
@@ -161,7 +162,13 @@ func (p *Parser) ParseProgram() *ast.Program {
 func (p *Parser) parseImportFile(program *ast.Program, fileName string) {
 	if runSourceDir != "" {
 		if !strings.Contains(fileName, "builtin.z") {
-			fileName = runSourceDir + "/" + fileName
+			fileDir := filepath.Dir(p.l.FileName)
+			fileDirArr := strings.Split(fileDir, runSourceDir)
+			if len(fileDirArr) > 1 {
+				fileName = runSourceDir + fileDirArr[1] + "/" + fileName
+			} else {
+				fileName = runSourceDir + "/" + fileName
+			}
 		}
 	}
 	if _, err := os.Stat(fileName); err != nil {
