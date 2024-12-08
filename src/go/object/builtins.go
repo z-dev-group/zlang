@@ -13,6 +13,7 @@ import (
 	"syscall"
 	"time"
 	"unsafe"
+	"z/config"
 
 	"github.com/go-sql-driver/mysql"
 )
@@ -425,6 +426,12 @@ var Builtins = []struct {
 			ret.Pairs[result2.HashKey()] = HashPair{Key: &String{Value: "result2"}, Value: &Integer{Value: int64(r2)}}
 			ret.Pairs[error_msg.HashKey()] = HashPair{Key: &String{Value: "error_msg"}, Value: &String{Value: err.Error()}}
 			return ret
+		}},
+	},
+	{
+		"version",
+		&Builtin{Fn: func(args ...Object) Object {
+			return &Float{Value: config.GetZVersion()}
 		}},
 	},
 }

@@ -1,0 +1,3 @@
+puts("z language version is:")
+puts(version())
+puts("\n")

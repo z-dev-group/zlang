@@ -7,6 +7,7 @@ import (
 	"os/user"
 	"strings"
 	"z/cli"
+	"z/config"
 	"z/repl"
 )
 
@@ -74,5 +75,6 @@ func main() {
 		panic(err)
 	}
 	fmt.Println("Welcome to z language , user is: ", user.Username, " type code to execute")
+	fmt.Printf("Version:%.1f\n", config.GetZVersion())
 	repl.Start(os.Stdin, os.Stdout)
 }
