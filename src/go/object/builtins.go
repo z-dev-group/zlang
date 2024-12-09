@@ -416,7 +416,7 @@ var Builtins = []struct {
 					a3 = uintptr(unsafe.Pointer(_p0))
 				}
 			}
-			pid, r2, err := syscall.Syscall(trap, a1, a2, a3)
+			pid, r2, err := doSyscall(trap, a1, a2, a3)
 			ret := &Hash{}
 			ret.Pairs = make(map[HashKey]HashPair)
 			result1 := String{Value: "result1"}
