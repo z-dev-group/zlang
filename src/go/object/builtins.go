@@ -19,10 +19,13 @@ import (
 )
 
 var db *sql.DB
-var Builtins = []struct {
+
+type BuiltinFn struct {
 	Name    string
 	Builtin *Builtin
-}{
+}
+
+var Builtins = []BuiltinFn{
 	{
 		"len",
 		&Builtin{Fn: func(args ...Object) Object {

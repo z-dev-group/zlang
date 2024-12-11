@@ -19,4 +19,6 @@ var Builtins = map[string]*object.Builtin{
 	"get_error_message": object.GetBuiltinByName("get_error_message"),
 	"syscall":           object.GetBuiltinByName("syscall"),
 	"version":           object.GetBuiltinByName("version"),
+	"file_get_contents": object.GetBuiltinByName("file_get_contents"),
+	"file_put_contents": object.GetBuiltinByName("file_put_contents"),
 }

@@ -1,0 +1,2 @@
+var_dump(file_get_contents("/Users/pantingwen/zlang/examples/hello.z"))
+var_dump(file_put_contents("/Users/pantingwen/zlang/examples/hello.txt", "hello"))
