@@ -1,19 +1,9 @@
-let fibonacci = fn(x) {
-	if (x ==0 ) {
-		0
-	} else {
-		if (x == 1) {
-			return 1
-		} else {
-			fibonacci(x - 1) + fibonacci(x - 2)
-		}
-	}
-}
-let result = fibonacci(10)
-puts("result is:", result, "\n")
 
-fn good() {
-	puts("this is good", "\n")
+
+fn default_name(province, name = "seven", age = 32) {
+	var_dump(province)
+	var_dump(name)
+	var_dump(age)
 }
 
-good()
+default_name("guizhou", "pan")

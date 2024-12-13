@@ -135,6 +135,11 @@ func (p *Parser) nextToken() {
 	p.tokenCount = p.tokenCount + 1
 }
 
+func (p *Parser) nextNextToken() {
+	p.nextToken()
+	p.nextToken()
+}
+
 func (p *Parser) Errors() []string {
 	return p.errors
 }
@@ -477,12 +482,20 @@ func (p *Parser) parseFunctionParameters() []*ast.Identifier {
 
 	p.nextToken()
 	ident := &ast.Identifier{Token: p.curToken, Value: p.curToken.Literal}
+
+	if p.peekTokenIs(token.ASSIGN) {
+		p.nextNextToken()
+		ident.Default = p.parseExpression(LOWEST)
+	}
 	identifiers = append(identifiers, ident)
 
 	for p.peekTokenIs(token.COMMA) {
-		p.nextToken()
-		p.nextToken()
+		p.nextNextToken()
 		ident := &ast.Identifier{Token: p.curToken, Value: p.curToken.Literal}
+		if p.peekTokenIs(token.ASSIGN) {
+			p.nextNextToken()
+			ident.Default = p.parseExpression(LOWEST)
+		}
 		identifiers = append(identifiers, ident)
 	}
 

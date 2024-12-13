@@ -299,7 +299,18 @@ func applyFunction(fn object.Object, args []object.Object) object.Object {
 func extendFunctionEnv(fn *object.Function, args []object.Object) *object.Environment {
 	env := object.NewEnclosedEnviroment(fn.Env)
 	for paramIdx, param := range fn.Parameters {
-		env.Set(param.Value, args[paramIdx], "")
+		if paramIdx < len(args) {
+			env.Set(param.Value, args[paramIdx], "")
+		}
+	}
+	// set default parameter value
+	for _, param := range fn.Parameters {
+		_, ok := env.Get(param.Value, "")
+		if !ok && param.Default != nil {
+			exps := []ast.Expression{param.Default}
+			defaultValue := evalExpressions(exps, env)[0]
+			env.Set(param.Value, defaultValue, "")
+		}
 	}
 	return env
 }

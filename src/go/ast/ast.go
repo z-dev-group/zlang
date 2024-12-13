@@ -45,6 +45,7 @@ func (p *Program) String() string {
 type Identifier struct {
 	Token       token.Token
 	Value       string
+	Default     Expression
 	FileName    string
 	PackageName string
 }
