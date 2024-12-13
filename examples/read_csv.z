@@ -5,7 +5,7 @@ fn parse(filePath) {
   let lines = string.explode("\n", csvStr)
   let array = []
   for (let i = 0; i < len(lines); i++) {
-    let lineArr = string.explode(",", lines[i])
+    let lineArr = string.explode(",", lines[i], true)
     array = push(array, lineArr)
   }
   return array

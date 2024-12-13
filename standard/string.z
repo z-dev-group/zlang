@@ -68,20 +68,26 @@ fn to_upper_or_lower_index(str, type, index) {
   return char
 }
 
-fn explode(splitor, string) {
+fn explode(splitor, string, is_trim = false) {
   let length = len(string)
   let subString = ""
   let result = []
   for (let i = 0; i < length; i++) {
     if (string[i] == splitor) {
-      result = push(result, trim(subString))
+      if (is_trim) {
+        subString = trim(subString)
+      }
+      result = push(result, subString)
       subString = ""
     } else {
       subString = subString + string[i]
     }
   }
   if (subString) {
-    result = push(result, trim(subString))
+    if (is_trim) {
+      subString = trim(subString)
+    }
+    result = push(result, subString)
   }
   return result
 }
