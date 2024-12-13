@@ -45,6 +45,7 @@ fn first_to_upper_or_lower(str, type) {
   }
   return retStr
 }
+
 fn to_upper_or_lower(str, type) {
   let strLen = len(str)
   let i = 0
@@ -65,4 +66,48 @@ fn to_upper_or_lower_index(str, type, index) {
     return char_to_lower(char)
   }
   return char
+}
+
+fn explode(splitor, string) {
+  let length = len(string)
+  let subString = ""
+  let result = []
+  for (let i = 0; i < length; i++) {
+    if (string[i] == splitor) {
+      result = push(result, trim(subString))
+      subString = ""
+    } else {
+      subString = subString + string[i]
+    }
+  }
+  if (subString) {
+    result = push(result, trim(subString))
+  }
+  return result
+}
+
+fn trim(str) {
+  let str_len = len(str)
+  let newStr = ""
+  let isLeftSpace = true
+
+  let isRightSpace   = true
+  let rightSpaceNum  = 0
+  for (let i = str_len - 1; i > 0; i--) {
+    if (str[i] != " ") {
+      isRightSpace = false
+      break
+    } else {
+      rightSpaceNum++
+    }
+  }
+  for (let i = 0; i < (str_len - rightSpaceNum); i++) {
+    if (str[i] != " ") {
+      isLeftSpace = false
+    }
+    if (!isLeftSpace) {
+      newStr = newStr + str[i]
+    }
+  }
+  return newStr
 }

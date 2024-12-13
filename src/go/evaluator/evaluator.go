@@ -239,7 +239,11 @@ func evalStringIndexExpress(str, index object.Object) object.Object {
 		return NULL
 	}
 	returnStringObject := object.String{}
-	singleString := string(stringObject.Value[idx])
+	char := stringObject.Value[idx]
+	singleString := string(char)
+	if char == '\n' {
+		singleString = "\\n"
+	}
 	returnStringObject.Value = singleString
 	return &returnStringObject
 }

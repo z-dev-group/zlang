@@ -1,0 +1,14 @@
+import "../standard/string"
+let csvFile = __DIR__ + "/data/person.csv";
+fn parse(filePath) {
+  let csvStr = file_get_contents(filePath);
+  let lines = string.explode("\n", csvStr)
+  let array = []
+  for (let i = 0; i < len(lines); i++) {
+    let lineArr = string.explode(",", lines[i])
+    array = push(array, lineArr)
+  }
+  return array
+}
+
+var_dump(parse(csvFile))

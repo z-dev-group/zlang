@@ -17,3 +17,5 @@ var_dump(string.to_upper("hello"))
 var_dump(string.first_to_upper("hello"))
 var_dump(string.to_lower("GOOD"))
 var_dump(string.first_to_lower("GOOD"))
+
+var_dump(len(string.trim("  hello ")))
