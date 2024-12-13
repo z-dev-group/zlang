@@ -8,3 +8,5 @@ let money = 98.12
 puts(money, "\n")
 let a = "23"
 // dd
+
+var_dump(__FILE__)

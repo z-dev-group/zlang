@@ -1,0 +1,4 @@
+var_dump(__FILE__)
+import "let.z"
+
+var_dump(__DIR__)

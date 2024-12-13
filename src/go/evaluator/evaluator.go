@@ -3,6 +3,7 @@ package evaluator
 import (
 	"encoding/json"
 	"fmt"
+	"path"
 	"strings"
 	"z/ast"
 	"z/object"
@@ -566,6 +567,14 @@ func evalIdentifier(node *ast.Identifier, env *object.Environment) object.Object
 	}
 	if node.Value == "json_decode" {
 		return init_builtin_json_decode()
+	}
+
+	if node.Value == "__FILE__" {
+		return &object.String{Value: node.FileName}
+	}
+
+	if node.Value == "__DIR__" {
+		return &object.String{Value: path.Dir(node.FileName)}
 	}
 
 	if !ok {
