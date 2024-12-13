@@ -1,4 +1,4 @@
-import "let.z"
+import "let"
 import "child.z"
 
 puts("import test", "\n")

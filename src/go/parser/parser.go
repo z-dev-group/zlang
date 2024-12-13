@@ -161,6 +161,9 @@ func (p *Parser) ParseProgram() *ast.Program {
 
 func (p *Parser) parseImportFile(program *ast.Program, fileName string) {
 	if runSourceDir != "" {
+		if !strings.HasSuffix(fileName, ".z") {
+			fileName = fileName + ".z"
+		}
 		if !strings.Contains(fileName, "builtin.z") {
 			fileDir := filepath.Dir(p.l.FileName)
 			fileDirArr := strings.Split(fileDir, runSourceDir)
