@@ -65,6 +65,9 @@ const (
 
 	COLON = ":"
 
+	AND = "&&"
+	OR  = "||"
+
 	FLOAT = "FLOAT"
 )
 

@@ -396,6 +396,16 @@ func isTruthy(obj object.Object) bool {
 
 func evalInfixExpression(operator string, left object.Object, right object.Object) object.Object {
 	switch {
+	case operator == token.AND:
+		if isTruthy(left) {
+			return right
+		}
+		return left
+	case operator == token.OR:
+		if !isTruthy(left) {
+			return right
+		}
+		return left
 	case operator == token.ASSIGN:
 		return right
 	case left.Type() == object.INTEGER_OBJ && right.Type() == object.INTEGER_OBJ:

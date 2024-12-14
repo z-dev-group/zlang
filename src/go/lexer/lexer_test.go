@@ -60,6 +60,7 @@ interface
 _name
 __age
 defer {}
+&& ||
 `
 	input += "`hello`"
 
@@ -239,6 +240,9 @@ defer {}
 		{token.DEFER, "defer"},
 		{token.LBRACE, "{"},
 		{token.RBRACE, "}"},
+		{token.SEMICOLON, ";"},
+		{token.AND, "&&"},
+		{token.OR, "||"},
 		{token.SEMICOLON, ";"},
 		// special string
 		{token.STRING, "hello"},

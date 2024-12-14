@@ -165,6 +165,14 @@ func (l *Lexer) NextToken() token.Token {
 			l.readChar()
 			return l.NextToken()
 		}
+	case '|':
+		if l.peekChar() == '|' {
+			tok = l.newTokenWithTwoChar(token.OR)
+		}
+	case '&':
+		if l.peekChar() == '&' {
+			tok = l.newTokenWithTwoChar(token.AND)
+		}
 	default:
 		if isLetter(l.ch) {
 			tok.Literal = l.readIndentifier()

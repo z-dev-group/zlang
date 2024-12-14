@@ -24,6 +24,7 @@ const (
 	_ int = iota
 	LOWEST
 	EQUALS
+	LOGIC
 	LESSGRATER
 	SUM
 	PRODUCT
@@ -35,6 +36,8 @@ const (
 var precedences = map[token.TokenType]int{
 	token.EQ:             EQUALS,
 	token.NOT_EQ:         EQUALS,
+	token.AND:            LOGIC,
+	token.OR:             LOGIC,
 	token.LT:             LESSGRATER,
 	token.GT:             LESSGRATER,
 	token.GE:             LESSGRATER,
@@ -99,6 +102,8 @@ func New(l *lexer.Lexer) *Parser {
 	p.registerInfix(token.LT, p.parseInfixExpression)
 	p.registerInfix(token.GE, p.parseInfixExpression)
 	p.registerInfix(token.LE, p.parseInfixExpression)
+	p.registerInfix(token.AND, p.parseInfixExpression)
+	p.registerInfix(token.OR, p.parseInfixExpression)
 	p.registerPrefix(token.TRUE, p.parseBoolean)
 	p.registerPrefix(token.FALSE, p.parseBoolean)
 	p.registerPrefix(token.LPAREN, p.parseGroupedExpression)
