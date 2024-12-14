@@ -402,10 +402,10 @@ func evalInfixExpression(operator string, left object.Object, right object.Objec
 		}
 		return left
 	case operator == token.OR:
-		if !isTruthy(left) {
-			return right
+		if isTruthy(left) {
+			return left
 		}
-		return left
+		return right
 	case operator == token.ASSIGN:
 		return right
 	case left.Type() == object.INTEGER_OBJ && right.Type() == object.INTEGER_OBJ:

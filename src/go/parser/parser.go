@@ -23,8 +23,8 @@ type (
 const (
 	_ int = iota
 	LOWEST
-	EQUALS
 	LOGIC
+	EQUALS
 	LESSGRATER
 	SUM
 	PRODUCT

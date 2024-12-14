@@ -92,9 +92,20 @@ fn explode(splitor, string, is_trim = false) {
   return result
 }
 
-fn trim(str) {
-  let str_len = len(str)
+fn ltrim(str) {
+  return trim(str, "left")
+}
+
+fn rtrim(str) {
+  return trim(str, "right")
+}
+
+fn trim(str, side = "both") {
   let newStr = ""
+  if (side != "both" && side != "left" && side != "right") {
+    return with_error(newStr, "side only be both, left, right options")
+  }
+  let str_len = len(str)
   let isLeftSpace = true
 
   let isRightSpace   = true
@@ -106,6 +117,12 @@ fn trim(str) {
     } else {
       rightSpaceNum++
     }
+  }
+  if (side == "left") {
+    rightSpaceNum = 0
+  }
+  if (side == "right") {
+    isLeftSpace = false
   }
   for (let i = 0; i < (str_len - rightSpaceNum); i++) {
     if (str[i] != " ") {

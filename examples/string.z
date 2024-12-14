@@ -19,3 +19,10 @@ var_dump(string.to_lower("GOOD"))
 var_dump(string.first_to_lower("GOOD"))
 
 var_dump(len(string.trim("  hello ")))
+
+let helloStr = " hello  "
+var_dump(len(helloStr)) // 8
+var_dump(len(string.trim(helloStr, "left"))) // 7
+var_dump(len(string.ltrim(helloStr)))        // 7
+var_dump(len(string.trim(helloStr, "right"))) // 6
+var_dump(len(string.rtrim(helloStr)))         // 6
