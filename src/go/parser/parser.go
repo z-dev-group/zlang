@@ -23,11 +23,12 @@ type (
 const (
 	_ int = iota
 	LOWEST
+	ASSIGN
+	QUESTION
 	LOGIC
 	EQUALS
 	LESSGRATER
 	SUM
-	QUESTION
 	PRODUCT
 	PREFIX
 	CALL
@@ -49,7 +50,7 @@ var precedences = map[token.TokenType]int{
 	token.SLASHASSIGN:    LESSGRATER,
 	token.PLUSPLUS:       LESSGRATER,
 	token.MINUSMINUS:     LESSGRATER,
-	token.ASSIGN:         LESSGRATER,
+	token.ASSIGN:         ASSIGN,
 	token.CLASS:          LESSGRATER,
 	token.PLUS:           SUM,
 	token.MINUS:          SUM,

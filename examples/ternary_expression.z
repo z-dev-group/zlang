@@ -5,3 +5,9 @@ var_dump(b) // 12
 a = false
 b = a ? 12 : 34
 var_dump(b) // 34
+
+let c = 12
+let d = 34
+let e = 1
+e = c > d ? c : d 
+var_dump(e) // 34
