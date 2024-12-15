@@ -27,6 +27,7 @@ const (
 	EQUALS
 	LESSGRATER
 	SUM
+	QUESTION
 	PRODUCT
 	PREFIX
 	CALL
@@ -58,6 +59,7 @@ var precedences = map[token.TokenType]int{
 	token.LBRACKET:       INDEX,
 	token.OBJET_GET:      INDEX,
 	token.CLASS_GET:      INDEX,
+	token.QUESTION:       QUESTION,
 }
 
 type Parser struct {
@@ -131,6 +133,7 @@ func New(l *lexer.Lexer) *Parser {
 	p.registerInfix(token.OBJET_GET, p.parseInfixExpression)
 	p.registerInfix(token.CLASS_GET, p.parseInfixExpression)
 	p.registerPrefix(token.DEFER, p.parseDeferExpression)
+	p.registerInfix(token.QUESTION, p.parseQuestionExpression)
 	return p
 }
 
@@ -285,7 +288,7 @@ func (p *Parser) parseExpression(precedence int) ast.Expression {
 	}
 	leftExp := prefix()
 
-	for !p.peekTokenIs(token.SEMICOLON) && precedence < p.peekPrecedence() {
+	for !p.peekTokenIs(token.SEMICOLON) && precedence < p.peekPrecedence() && !p.peekTokenIs(token.COLON) {
 		infix := p.infixPasrseFns[p.peekToken.Type]
 		if infix == nil {
 			return leftExp
@@ -787,4 +790,24 @@ func (p *Parser) parseDeferExpression() ast.Expression { // same as parseBlockSt
 		p.nextToken()
 	}
 	return block
+}
+
+func (p *Parser) parseQuestionExpression(left ast.Expression) ast.Expression {
+	expression := &ast.IfExpression{Token: p.curToken, Condition: left}
+	expression.Consequence = &ast.BlockStatement{
+		Statements: []ast.Statement{},
+	}
+	p.nextToken()
+	stmt := p.parseStatement()
+	expression.Consequence.Statements = append(expression.Consequence.Statements, stmt)
+	p.nextToken()
+	if p.curTokenIs(token.COLON) {
+		expression.Alternative = &ast.BlockStatement{
+			Statements: []ast.Statement{},
+		}
+		p.nextToken()
+		alterStmt := p.parseStatement()
+		expression.Alternative.Statements = append(expression.Alternative.Statements, alterStmt)
+	}
+	return expression
 }

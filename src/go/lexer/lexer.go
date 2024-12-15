@@ -173,6 +173,8 @@ func (l *Lexer) NextToken() token.Token {
 		if l.peekChar() == '&' {
 			tok = l.newTokenWithTwoChar(token.AND)
 		}
+	case '?':
+		tok = newToken(token.QUESTION, l.ch)
 	default:
 		if isLetter(l.ch) {
 			tok.Literal = l.readIndentifier()

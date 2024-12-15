@@ -1,0 +1,7 @@
+let a = true
+
+let b = a ? 12 : 34
+var_dump(b) // 12
+a = false
+b = a ? 12 : 34
+var_dump(b) // 34

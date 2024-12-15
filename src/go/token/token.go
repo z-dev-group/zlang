@@ -68,6 +68,8 @@ const (
 	AND = "&&"
 	OR  = "||"
 
+	QUESTION = "?"
+
 	FLOAT = "FLOAT"
 )
 
